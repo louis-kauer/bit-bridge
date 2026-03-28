@@ -1,0 +1,23 @@
+# Bit Bridge - User Interface Settings
+# These values configure the UI defaults, not the load balancer itself.
+
+# Path to the load balancer configuration file (YAML)
+config_file_path = "bitbridge-config.yaml"
+
+# Default values pre-filled when creating a new configuration
+[defaults]
+name = "bit-bridge-cluster"
+listen_address = "0.0.0.0"
+listen_port = 8080
+routing_algorithm = "power-of-two-choices"
+
+[defaults.health_check]
+enabled = true
+interval_ms = 5000
+timeout_ms = 2000
+unhealthy_threshold = 3
+
+[defaults.connection]
+max_per_service = 1024
+idle_timeout_ms = 30000
+connect_timeout_ms = 5000
