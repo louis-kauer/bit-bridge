@@ -5,6 +5,7 @@
 #include <wx/filename.h>
 #include <wx/statline.h>
 #include <array>
+#include <vector>
 
 MainFrame::MainFrame(const wxString &title, const wxPoint &pos, const wxSize &size,
                      std::unique_ptr<AppSettings> settings)
@@ -164,7 +165,7 @@ void MainFrame::HandleTabNavigation(wxKeyEvent &event) {
         }
     }
 
-    m_nameInput->SetFocus();
+    event.Skip();
 }
 
 void MainFrame::RepositionEmptyLabel() const {
@@ -205,7 +206,7 @@ void MainFrame::LoadExistingConfig() {
     if (m_serializer->Load(*m_config, configPath)) {
         RefreshServiceList();
         MarkSaved();
-        SetStatusText(wxString::Format("Configuration loaded from %s", configPath));
+        SetStatusText(wxString::Format("Configuration loaded from %s", configPath.c_str()));
     }
 }
 
@@ -304,7 +305,7 @@ void MainFrame::OnRemoveService([[maybe_unused]] wxCommandEvent &event) {
 void MainFrame::OnLoadConfig([[maybe_unused]] wxCommandEvent &event) {
     const std::string configPath = m_settings->GetConfigFilePath();
     if (!wxFileName::Exists(configPath)) {
-        wxMessageBox(wxString::Format("Configuration file not found: %s", configPath),
+        wxMessageBox(wxString::Format("Configuration file not found: %s", configPath.c_str()),
                      "Load Error", wxOK | wxICON_WARNING);
         return;
     }
@@ -313,7 +314,7 @@ void MainFrame::OnLoadConfig([[maybe_unused]] wxCommandEvent &event) {
         m_config = std::move(newConfig);
         RefreshServiceList();
         MarkSaved();
-        SetStatusText(wxString::Format("Configuration loaded from %s", configPath));
+        SetStatusText(wxString::Format("Configuration loaded from %s", configPath.c_str()));
     } else {
         wxMessageBox("Failed to parse configuration file.", "Load Error",
                      wxOK | wxICON_ERROR);
@@ -323,7 +324,7 @@ void MainFrame::OnLoadConfig([[maybe_unused]] wxCommandEvent &event) {
 void MainFrame::OnSaveConfig([[maybe_unused]] wxCommandEvent &event) {
     if (const std::string configPath = m_settings->GetConfigFilePath(); m_serializer->Save(*m_config, configPath)) {
         MarkSaved();
-        SetStatusText(wxString::Format("Configuration saved to %s", configPath));
+        SetStatusText(wxString::Format("Configuration saved to %s", configPath.c_str()));
     } else {
         wxMessageBox("Failed to save configuration file.", "Save Error",
                      wxOK | wxICON_ERROR);

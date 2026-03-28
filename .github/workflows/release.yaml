@@ -20,8 +20,9 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/marzer/tomlplusplus.git /tmp/tomlplusplus
           cd /tmp/tomlplusplus
-          sudo cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local
-          sudo cmake --build build --target install
+          cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local
+          cmake --build build
+          sudo cmake --install build
 
       - name: Build release
         run: make release

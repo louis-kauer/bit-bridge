@@ -65,6 +65,7 @@ bool YamlConfigSerializer::Save(const LoadBalancerConfig &config, const std::str
 bool YamlConfigSerializer::Load(LoadBalancerConfig &config, const std::string &filePath) {
     try {
         YAML::Node root = YAML::LoadFile(filePath);
+        config.ClearServices();
 
         if (root["name"]) {
             config.SetName(root["name"].as<std::string>());

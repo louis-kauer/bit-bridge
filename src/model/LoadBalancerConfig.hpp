@@ -39,6 +39,8 @@ public:
 
     void AddService(const ServiceNode &service);
 
+    void ClearServices();
+
     void RemoveService(size_t index);
 
     [[nodiscard]] const std::vector<ServiceNode> &GetServices() const;

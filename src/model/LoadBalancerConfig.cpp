@@ -24,6 +24,10 @@ void LoadBalancerConfig::AddService(const ServiceNode &service) {
     m_services.push_back(service);
 }
 
+void LoadBalancerConfig::ClearServices() {
+    m_services.clear();
+}
+
 void LoadBalancerConfig::RemoveService(size_t index) {
     if (index < m_services.size()) {
         m_services.erase(m_services.begin() + static_cast<std::ptrdiff_t>(index));
