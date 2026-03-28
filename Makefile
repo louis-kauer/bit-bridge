@@ -7,6 +7,7 @@ BUILD_DIR_DEBUG := cmake-build-debug
 BUILD_DIR_RELEASE := cmake-build-release
 BUILD_DIR_RELWITHDEBINFO := cmake-build-relwithdebinfo
 BUILD_DIR_MINSIZEREL := cmake-build-minsizerel
+BUILD_DIR_ASAN := cmake-build-asan
 
 # CMake settings
 CMAKE ?= cmake
@@ -182,7 +183,7 @@ compile-commands: configure-debug ## Generate compile_commands.json for IDE/clan
 .PHONY: lint
 lint: compile-commands ## Run clang-tidy static analysis.
 	@if command -v clang-tidy >/dev/null 2>&1; then \
-		clang-tidy -p $(BUILD_DIR_DEBUG) main.cpp; \
+		find src -name '*.cpp' | xargs clang-tidy -p $(BUILD_DIR_DEBUG); \
 	else \
 		echo "clang-tidy not found. Install with: brew install llvm"; \
 	fi
@@ -220,6 +221,34 @@ test-verbose: debug ## Run tests with verbose output.
 	else \
 		echo "No tests configured. Add tests to CMakeLists.txt to enable testing."; \
 	fi
+
+.PHONY: test-asan
+test-asan: ## Run tests with AddressSanitizer enabled.
+	@$(CMAKE) -S . -B $(BUILD_DIR_ASAN) -G $(CMAKE_GENERATOR) \
+		-DCMAKE_BUILD_TYPE=Debug \
+		-DENABLE_ASAN=ON \
+		$(if $(CXX),-DCMAKE_CXX_COMPILER=$(CXX),) \
+		$(if $(CC),-DCMAKE_C_COMPILER=$(CC),)
+	@$(CMAKE) --build $(BUILD_DIR_ASAN) --target bit_bridge_tests -j$(JOBS)
+	@$(BUILD_DIR_ASAN)/bit_bridge_tests
+
+.PHONY: run-asan
+run-asan: ## Run the app with AddressSanitizer (quit the app to see the report).
+	@$(CMAKE) -S . -B $(BUILD_DIR_ASAN) -G $(CMAKE_GENERATOR) \
+		-DCMAKE_BUILD_TYPE=Debug \
+		-DENABLE_ASAN=ON \
+		$(if $(CXX),-DCMAKE_CXX_COMPILER=$(CXX),) \
+		$(if $(CC),-DCMAKE_C_COMPILER=$(CC),)
+	@$(CMAKE) --build $(BUILD_DIR_ASAN) --target bit_bridge -j$(JOBS)
+	@$(BUILD_DIR_ASAN)/bit_bridge
+
+##@ Setup
+
+.PHONY: install-hooks
+install-hooks: ## Install git hooks from scripts/ directory.
+	@cp scripts/pre-push .git/hooks/pre-push
+	@chmod +x .git/hooks/pre-push
+	@echo "Git hooks installed."
 
 ##@ Info
 
