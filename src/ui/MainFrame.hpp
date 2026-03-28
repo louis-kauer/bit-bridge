@@ -9,8 +9,7 @@
 #include "AppSettings.hpp"
 
 enum class BitBridgeIds : int {
-    ID_LOWEST = 0,
-    ID_ADD_SERVICE,
+    ID_ADD_SERVICE = wxID_HIGHEST + 1,
     ID_REMOVE_SERVICE,
     ID_SAVE_CONFIG,
     ID_LOAD_CONFIG
