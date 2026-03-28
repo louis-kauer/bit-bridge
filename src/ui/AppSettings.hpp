@@ -2,6 +2,7 @@
 #define BIT_BRIDGE_APP_SETTINGS_HPP
 
 #include <string>
+#include <cstdint> // needed for linux build
 
 class AppSettings {
 public:
