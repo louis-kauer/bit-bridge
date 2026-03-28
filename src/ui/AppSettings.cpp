@@ -30,29 +30,29 @@ bool AppSettings::LoadFromFile(const std::string &filePath) {
         m_configFilePath = tbl["config_file_path"].value_or(m_configFilePath);
 
         if (auto defaults = tbl["defaults"].as_table()) {
-            m_defaultName = defaults->at("name").value_or(m_defaultName);
-            m_defaultListenAddress = defaults->at("listen_address").value_or(m_defaultListenAddress);
-            m_defaultListenPort = static_cast<uint16_t>(defaults->at("listen_port").value_or(
+            m_defaultName = (*defaults)["name"].value_or(m_defaultName);
+            m_defaultListenAddress = (*defaults)["listen_address"].value_or(m_defaultListenAddress);
+            m_defaultListenPort = static_cast<uint16_t>((*defaults)["listen_port"].value_or(
                 static_cast<int64_t>(m_defaultListenPort)));
-            m_defaultRoutingAlgorithm = defaults->at("routing_algorithm").value_or(m_defaultRoutingAlgorithm);
+            m_defaultRoutingAlgorithm = (*defaults)["routing_algorithm"].value_or(m_defaultRoutingAlgorithm);
         }
 
         if (auto hc = tbl["defaults"]["health_check"].as_table()) {
-            m_defaultHealthCheckEnabled = hc->at("enabled").value_or(m_defaultHealthCheckEnabled);
-            m_defaultHealthCheckIntervalMs = static_cast<uint32_t>(hc->at("interval_ms").value_or(
+            m_defaultHealthCheckEnabled = (*hc)["enabled"].value_or(m_defaultHealthCheckEnabled);
+            m_defaultHealthCheckIntervalMs = static_cast<uint32_t>((*hc)["interval_ms"].value_or(
                 static_cast<int64_t>(m_defaultHealthCheckIntervalMs)));
-            m_defaultHealthCheckTimeoutMs = static_cast<uint32_t>(hc->at("timeout_ms").value_or(
+            m_defaultHealthCheckTimeoutMs = static_cast<uint32_t>((*hc)["timeout_ms"].value_or(
                 static_cast<int64_t>(m_defaultHealthCheckTimeoutMs)));
-            m_defaultHealthCheckUnhealthyThreshold = static_cast<uint32_t>(hc->at("unhealthy_threshold").value_or(
+            m_defaultHealthCheckUnhealthyThreshold = static_cast<uint32_t>((*hc)["unhealthy_threshold"].value_or(
                 static_cast<int64_t>(m_defaultHealthCheckUnhealthyThreshold)));
         }
 
         if (auto conn = tbl["defaults"]["connection"].as_table()) {
-            m_defaultMaxPerService = static_cast<uint32_t>(conn->at("max_per_service").value_or(
+            m_defaultMaxPerService = static_cast<uint32_t>((*conn)["max_per_service"].value_or(
                 static_cast<int64_t>(m_defaultMaxPerService)));
-            m_defaultIdleTimeoutMs = static_cast<uint32_t>(conn->at("idle_timeout_ms").value_or(
+            m_defaultIdleTimeoutMs = static_cast<uint32_t>((*conn)["idle_timeout_ms"].value_or(
                 static_cast<int64_t>(m_defaultIdleTimeoutMs)));
-            m_defaultConnectTimeoutMs = static_cast<uint32_t>(conn->at("connect_timeout_ms").value_or(
+            m_defaultConnectTimeoutMs = static_cast<uint32_t>((*conn)["connect_timeout_ms"].value_or(
                 static_cast<int64_t>(m_defaultConnectTimeoutMs)));
         }
 
