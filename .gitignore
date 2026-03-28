@@ -1,5 +1,9 @@
 .idea
 
+### Additional Files
+notes.md
+bitbridge-config.yaml
+
 ### C++ template
 # Prerequisites
 *.d
@@ -35,6 +39,7 @@
 *.app
 
 ### CMake template
+cmake-build-*/
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
