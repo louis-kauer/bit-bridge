@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwxgtk3.2-dev libyaml-cpp-dev libgtest-dev clang-tidy cmake build-essential
+
+      - name: Install tomlplusplus
+        run: |
+          git clone --depth 1 https://github.com/marzer/tomlplusplus.git /tmp/tomlplusplus
+          cd /tmp/tomlplusplus
+          sudo cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local
+          sudo cmake --build build --target install
+
+      - name: Build
+        run: make build
+
+      - name: Run tests
+        run: make test
+
+      - name: Run tests with AddressSanitizer
+        run: make test-asan
+
+      - name: Lint
+        run: make lint

@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwxgtk3.2-dev libyaml-cpp-dev libgtest-dev cmake build-essential
+
+      - name: Install tomlplusplus
+        run: |
+          git clone --depth 1 https://github.com/marzer/tomlplusplus.git /tmp/tomlplusplus
+          cd /tmp/tomlplusplus
+          sudo cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local
+          sudo cmake --build build --target install
+
+      - name: Build release
+        run: make release
+
+      - name: Run tests
+        run: make test
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          cp cmake-build-release/bit_bridge dist/bit_bridge-linux-amd64
+          cp bitbridge-settings.toml dist/
+          tar -czf bit-bridge-${{ github.ref_name }}-linux-amd64.tar.gz -C dist .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bit-bridge-${{ github.ref_name }}-linux-amd64
+          path: bit-bridge-${{ github.ref_name }}-linux-amd64.tar.gz
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: bit-bridge-${{ github.ref_name }}-linux-amd64.tar.gz
+          generate_release_notes: true
