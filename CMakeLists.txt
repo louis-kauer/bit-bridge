@@ -4,24 +4,30 @@ project(bit_bridge)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# --- Dependencies ---
-find_package(wxWidgets REQUIRED COMPONENTS net core base)
-if (wxWidgets_USE_FILE)
-    include(${wxWidgets_USE_FILE})
-endif ()
-
+# --- Shared dependency ---
 find_package(yaml-cpp REQUIRED)
-find_package(tomlplusplus REQUIRED)
 
 # --- Modules ---
 add_subdirectory(lib)
-add_subdirectory(ui)
 add_subdirectory(core)
 
-# --- Tests ---
+# UI and tests are optional — skip if wxWidgets not available
+find_package(wxWidgets COMPONENTS net core base)
+if (wxWidgets_FOUND)
+    if (wxWidgets_USE_FILE)
+        include(${wxWidgets_USE_FILE})
+    endif ()
+    find_package(tomlplusplus REQUIRED)
+    add_subdirectory(ui)
+endif ()
+
+# --- Tests (optional — requires GTest) ---
 enable_testing()
 option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
-add_subdirectory(tests)
+find_package(GTest QUIET)
+if (wxWidgets_FOUND AND GTest_FOUND)
+    add_subdirectory(tests)
+endif ()
 
 # --- ASan ---
 if (ENABLE_ASAN)

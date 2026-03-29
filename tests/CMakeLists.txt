@@ -1,5 +1,4 @@
 # tests/ — all unit and integration tests
-find_package(GTest REQUIRED)
 
 set(TEST_SOURCES
         lib/model/ServiceNodeTest.cpp
