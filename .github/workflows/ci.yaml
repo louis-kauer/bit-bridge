@@ -49,6 +49,7 @@ jobs:
         run: make build-lb
 
   test-lib:
+    needs: build-lib
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -67,6 +68,7 @@ jobs:
         run: make test-lib
 
   test-core:
+    needs: build-lb
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -85,6 +87,7 @@ jobs:
         run: make test-core
 
   asan:
+    needs: [ build-lib, build-lb ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -100,6 +103,7 @@ jobs:
         run: make test-asan
 
   lint:
+    needs: [ build-lib, build-ui, build-lb ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
