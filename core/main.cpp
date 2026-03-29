@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     if (argc < 2) {
         std::cerr << "Usage: bit_bridge_lb <config-file>" << std::endl;
         return 1;
@@ -13,8 +13,7 @@ int main(int argc, char* argv[]) {
     const std::string configPath = argv[1];
 
     LoadBalancerConfig config;
-    YamlConfigSerializer serializer;
-    if (!serializer.Load(config, configPath)) {
+    if (YamlConfigSerializer serializer; !serializer.Load(config, configPath)) {
         std::cerr << "Error: Failed to load config from " << configPath << std::endl;
         return 1;
     }
@@ -29,7 +28,7 @@ int main(int argc, char* argv[]) {
     std::cout << "  Algorithm: " << config.GetRoutingAlgorithm() << std::endl;
     std::cout << "  Services: " << config.GetServiceCount() << std::endl;
 
-    for (const auto& svc : config.GetServices()) {
+    for (const auto &svc: config.GetServices()) {
         std::cout << "    - " << svc.GetName() << " (" << svc.GetIp() << ":" << svc.GetPort() << ")" << std::endl;
     }
 

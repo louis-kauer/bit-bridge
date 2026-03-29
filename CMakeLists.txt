@@ -25,10 +25,10 @@ add_subdirectory(tests)
 
 # --- ASan ---
 if (ENABLE_ASAN)
-    foreach(target bit_bridge bit_bridge_lb bit_bridge_tests)
+    foreach (target bit_bridge bit_bridge_lb bit_bridge_tests)
         if (TARGET ${target})
             target_compile_options(${target} PRIVATE -fsanitize=address -fno-omit-frame-pointer)
             target_link_options(${target} PRIVATE -fsanitize=address)
         endif ()
-    endforeach()
+    endforeach ()
 endif ()
