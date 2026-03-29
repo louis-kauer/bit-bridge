@@ -244,7 +244,7 @@ test-lib: debug ## Run lib tests only (model + serialization).
 
 .PHONY: test-core
 test-core: debug ## Run core tests only (routing, state, pool).
-	@$(BUILD_DIR_DEBUG)/tests/bit_bridge_tests --gtest_filter="P2CStrategy*:ConsistentHashStrategy*:BackendState*:BackendPool*"
+	@$(BUILD_DIR_DEBUG)/tests/bit_bridge_tests --gtest_filter="P2CStrategy*:ConsistentHashStrategy*:BackendState*:BackendPool*" --gtest_fail_if_no_test
 
 .PHONY: test-asan
 test-asan: ## Run tests with AddressSanitizer enabled.

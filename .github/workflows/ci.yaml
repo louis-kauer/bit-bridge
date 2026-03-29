@@ -7,17 +7,10 @@ on:
     branches: [ main ]
 
 jobs:
-  install-deps:
+  build-all:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Cache dependencies
-        id: cache-deps
-        uses: actions/cache@v4
-        with:
-          path: /usr/local/lib/cmake/tomlplusplus
-          key: tomlplusplus-${{ runner.os }}
 
       - name: Install system dependencies
         run: |
@@ -25,7 +18,6 @@ jobs:
           sudo apt-get install -y libwxgtk3.2-dev libyaml-cpp-dev libgtest-dev clang-tidy cmake build-essential
 
       - name: Install tomlplusplus
-        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           git clone --depth 1 https://github.com/marzer/tomlplusplus.git /tmp/tomlplusplus
           cd /tmp/tomlplusplus
@@ -36,15 +28,8 @@ jobs:
       - name: Build all targets
         run: make build
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-debug
-          path: cmake-build-debug/
-          retention-days: 1
-
   test-lib:
-    needs: install-deps
+    needs: build-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -63,7 +48,7 @@ jobs:
         run: make test-lib
 
   test-core:
-    needs: install-deps
+    needs: build-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -82,7 +67,7 @@ jobs:
         run: make test-core
 
   build-ui:
-    needs: install-deps
+    needs: build-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -98,7 +83,7 @@ jobs:
         run: make build-ui
 
   build-lb:
-    needs: install-deps
+    needs: build-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -112,7 +97,7 @@ jobs:
         run: make build-lb
 
   asan:
-    needs: install-deps
+    needs: build-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -128,7 +113,7 @@ jobs:
         run: make test-asan
 
   lint:
-    needs: install-deps
+    needs: build-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
