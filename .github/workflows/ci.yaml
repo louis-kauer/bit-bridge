@@ -7,32 +7,113 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  build-lib:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwxgtk3.2-dev libyaml-cpp-dev libgtest-dev clang-tidy cmake build-essential
+          sudo apt-get install -y libyaml-cpp-dev cmake build-essential
 
-      - name: Install tomlplusplus
+      - name: Build lib
+        run: make build-lib
+
+  build-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
         run: |
-          git clone --depth 1 https://github.com/marzer/tomlplusplus.git /tmp/tomlplusplus
-          cd /tmp/tomlplusplus
-          cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local
-          cmake --build build
-          sudo cmake --install build
+          sudo apt-get update
+          sudo apt-get install -y libwxgtk3.2-dev libyaml-cpp-dev cmake build-essential
+          git clone --depth 1 --branch v3.4.0 https://github.com/marzer/tomlplusplus.git /tmp/tomlplusplus
+          cd /tmp/tomlplusplus && cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local && cmake --build build && sudo cmake --install build
+
+      - name: Build UI
+        run: make build-ui
+
+  build-lb:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libyaml-cpp-dev cmake build-essential
+
+      - name: Build LB
+        run: make build-lb
+
+  test-lib:
+    needs: build-lib
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libyaml-cpp-dev cmake build-essential
+          git clone --depth 1 --branch v1.17.0 https://github.com/google/googletest.git /tmp/googletest
+          cd /tmp/googletest && cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local && cmake --build build && sudo cmake --install build
 
       - name: Build
         run: make build
 
-      - name: Run tests
-        run: make test
+      - name: Run lib tests
+        run: make test-lib
 
-      - name: Run tests with AddressSanitizer
+  test-core:
+    needs: build-lb
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libyaml-cpp-dev cmake build-essential
+          git clone --depth 1 --branch v1.17.0 https://github.com/google/googletest.git /tmp/googletest
+          cd /tmp/googletest && cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local && cmake --build build && sudo cmake --install build
+
+      - name: Build
+        run: make build
+
+      - name: Run core tests
+        run: make test-core
+
+  asan:
+    needs: [ build-lib, build-lb ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libyaml-cpp-dev cmake build-essential
+          git clone --depth 1 --branch v1.17.0 https://github.com/google/googletest.git /tmp/googletest
+          cd /tmp/googletest && cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local && cmake --build build && sudo cmake --install build
+
+      - name: Run ASan tests
         run: make test-asan
+
+  lint:
+    needs: [ build-lib, build-ui, build-lb ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwxgtk3.2-dev libyaml-cpp-dev clang-tidy cmake build-essential
+          git clone --depth 1 --branch v3.4.0 https://github.com/marzer/tomlplusplus.git /tmp/tomlplusplus
+          cd /tmp/tomlplusplus && cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local && cmake --build build && sudo cmake --install build
 
       - name: Lint
         run: make lint

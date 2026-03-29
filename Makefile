@@ -132,7 +132,7 @@ clean-release: ## Clean release build.
 
 .PHONY: clean-all
 clean-all: ## Clean all build directories.
-	rm -rf $(BUILD_DIR_DEBUG) $(BUILD_DIR_RELEASE) $(BUILD_DIR_RELWITHDEBINFO) $(BUILD_DIR_MINSIZEREL)
+	rm -rf $(BUILD_DIR_DEBUG) $(BUILD_DIR_RELEASE) $(BUILD_DIR_RELWITHDEBINFO) $(BUILD_DIR_MINSIZEREL) $(BUILD_DIR_ASAN)
 
 .PHONY: clean-cache
 clean-cache: ## Clean CMake cache (debug).
@@ -146,7 +146,7 @@ clean-cache-release: ## Clean CMake cache (release).
 
 .PHONY: distclean
 distclean: ## Remove all build directories and generated files.
-	rm -rf $(BUILD_DIR_DEBUG) $(BUILD_DIR_RELEASE) $(BUILD_DIR_RELWITHDEBINFO) $(BUILD_DIR_MINSIZEREL)
+	rm -rf $(BUILD_DIR_DEBUG) $(BUILD_DIR_RELEASE) $(BUILD_DIR_RELWITHDEBINFO) $(BUILD_DIR_MINSIZEREL) $(BUILD_DIR_ASAN)
 	rm -f compile_commands.json
 
 ##@ Rebuild
@@ -164,15 +164,31 @@ rebuild-all: clean-all build-all ## Clean and rebuild all configurations.
 
 .PHONY: run
 run: ## Run debug binary.
-	./$(BUILD_DIR_DEBUG)/$(PROJECT_NAME)
+	./$(BUILD_DIR_DEBUG)/ui/$(PROJECT_NAME)
 
 .PHONY: run-release
 run-release: ## Run release binary.
-	./$(BUILD_DIR_RELEASE)/$(PROJECT_NAME)
+	./$(BUILD_DIR_RELEASE)/ui/$(PROJECT_NAME)
 
 .PHONY: run-args
 run-args: ## Run debug binary with ARGS (e.g., make run-args ARGS="arg1 arg2").
-	./$(BUILD_DIR_DEBUG)/$(PROJECT_NAME) $(ARGS)
+	./$(BUILD_DIR_DEBUG)/ui/$(PROJECT_NAME) $(ARGS)
+
+.PHONY: build-lb
+build-lb: configure-debug ## Build LB binary only.
+	$(CMAKE) --build $(BUILD_DIR_DEBUG) --target bit_bridge_lb -j$(JOBS)
+
+.PHONY: build-ui
+build-ui: configure-debug ## Build UI binary only.
+	$(CMAKE) --build $(BUILD_DIR_DEBUG) --target bit_bridge -j$(JOBS)
+
+.PHONY: build-lib
+build-lib: configure-debug ## Build shared library only.
+	$(CMAKE) --build $(BUILD_DIR_DEBUG) --target bitbridge_lib -j$(JOBS)
+
+.PHONY: run-lb
+run-lb: build-lb ## Run LB binary with default config.
+	./$(BUILD_DIR_DEBUG)/core/bit_bridge_lb $(if $(ARGS),$(ARGS),bitbridge-config.yaml)
 
 ##@ Analysis
 
@@ -183,7 +199,7 @@ compile-commands: configure-debug ## Generate compile_commands.json for IDE/clan
 .PHONY: lint
 lint: compile-commands ## Run clang-tidy static analysis.
 	@if command -v clang-tidy >/dev/null 2>&1; then \
-		find src -name '*.cpp' | xargs clang-tidy -p $(BUILD_DIR_DEBUG); \
+		find lib core ui -name '*.cpp' | xargs clang-tidy -p $(BUILD_DIR_DEBUG); \
 	else \
 		echo "clang-tidy not found. Install with: brew install llvm"; \
 	fi
@@ -222,6 +238,14 @@ test-verbose: debug ## Run tests with verbose output.
 		echo "No tests configured. Add tests to CMakeLists.txt to enable testing."; \
 	fi
 
+.PHONY: test-lib
+test-lib: debug ## Run lib tests only (model + serialization).
+	@$(BUILD_DIR_DEBUG)/tests/bit_bridge_tests --gtest_filter="ServiceNode*:HealthCheckConfig*:ConnectionConfig*:LoadBalancerConfig*:YamlConfigSerializer*"
+
+.PHONY: test-core
+test-core: debug ## Run core tests only (routing, state, pool).
+	@$(BUILD_DIR_DEBUG)/tests/bit_bridge_tests --gtest_filter="P2CStrategy*:ConsistentHashStrategy*:BackendState*:BackendPool*" --gtest_fail_if_no_test
+
 .PHONY: test-asan
 test-asan: ## Run tests with AddressSanitizer enabled.
 	@$(CMAKE) -S . -B $(BUILD_DIR_ASAN) -G $(CMAKE_GENERATOR) \
@@ -230,7 +254,7 @@ test-asan: ## Run tests with AddressSanitizer enabled.
 		$(if $(CXX),-DCMAKE_CXX_COMPILER=$(CXX),) \
 		$(if $(CC),-DCMAKE_C_COMPILER=$(CC),)
 	@$(CMAKE) --build $(BUILD_DIR_ASAN) --target bit_bridge_tests -j$(JOBS)
-	@$(BUILD_DIR_ASAN)/bit_bridge_tests
+	@$(BUILD_DIR_ASAN)/tests/bit_bridge_tests
 
 .PHONY: run-asan
 run-asan: ## Run the app with AddressSanitizer (quit the app to see the report).
