@@ -25,7 +25,7 @@ endif ()
 enable_testing()
 option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
 find_package(GTest QUIET)
-if (wxWidgets_FOUND AND GTest_FOUND)
+if (GTest_FOUND)
     add_subdirectory(tests)
 endif ()
 

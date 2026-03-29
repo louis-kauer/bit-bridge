@@ -10,15 +10,9 @@ set(TEST_SOURCES
 
 add_executable(bit_bridge_tests ${TEST_SOURCES})
 
-target_include_directories(bit_bridge_tests PRIVATE
-        ${CMAKE_SOURCE_DIR}/ui
-)
-
 target_link_libraries(bit_bridge_tests PRIVATE
         GTest::gtest_main
         bitbridge_lib
-        ${wxWidgets_LIBRARIES}
-        tomlplusplus::tomlplusplus
 )
 
 include(GoogleTest)
