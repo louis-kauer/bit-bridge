@@ -87,7 +87,7 @@ MainFrame::MainFrame(const wxString &title, const wxPoint &pos, const wxSize &si
     // Status bar
     wxFrameBase::CreateStatusBar(2);
     wxFrameBase::SetStatusText("Ready", 0);
-    const std::array<int, 2> fieldWidths = {-1, 150};
+    constexpr std::array<int, 2> fieldWidths = {-1, 150};
     wxFrameBase::GetStatusBar()->SetStatusWidths(2, fieldWidths.data());
 
     // Orange unsaved indicator overlaid on the second status bar field
@@ -157,11 +157,11 @@ void MainFrame::HandleTabNavigation(wxKeyEvent &event) {
     };
 
     for (size_t i = 0; i < tabOrder.size(); ++i) {
-        if (focused == tabOrder[i]) {
-            size_t next = event.ShiftDown()
+        if (focused == tabOrder.at(i)) {
+            const size_t next = event.ShiftDown()
                               ? (i + tabOrder.size() - 1) % tabOrder.size()
                               : (i + 1) % tabOrder.size();
-            tabOrder[next]->SetFocus();
+            tabOrder.at(next)->SetFocus();
             return;
         }
     }
@@ -245,8 +245,7 @@ void MainFrame::OnAddService([[maybe_unused]] wxCommandEvent &event) {
     weightStr.ToULong(&weightVal);
 
     // Check for duplicate name or IP:port
-    const auto &services = m_config->GetServices();
-    for (const auto &existing: services) {
+    for (const auto &services = m_config->GetServices(); const auto &existing: services) {
         if (existing.GetName() == name.ToStdString()) {
             wxMessageBox(wxString::Format("A service named '%s' already exists.", name),
                          "Duplicate Service", wxOK | wxICON_WARNING);
@@ -336,10 +335,10 @@ void MainFrame::RefreshServiceList() const {
     m_serviceList->DeleteAllItems();
     const auto &services = m_config->GetServices();
     for (size_t i = 0; i < services.size(); ++i) {
-        const long index = m_serviceList->InsertItem(static_cast<long>(i), services[i].GetName());
-        m_serviceList->SetItem(index, 1, services[i].GetIp());
-        m_serviceList->SetItem(index, 2, std::to_string(services[i].GetPort()));
-        m_serviceList->SetItem(index, 3, std::to_string(services[i].GetWeight()));
+        const long index = m_serviceList->InsertItem(static_cast<long>(i), services.at(i).GetName());
+        m_serviceList->SetItem(index, 1, services.at(i).GetIp());
+        m_serviceList->SetItem(index, 2, std::to_string(services.at(i).GetPort()));
+        m_serviceList->SetItem(index, 3, std::to_string(services.at(i).GetWeight()));
     }
 
     const bool empty = services.empty();
