@@ -18,7 +18,7 @@ public:
 
     AppSettings &operator=(AppSettings &&other) noexcept = default;
 
-    bool LoadFromFile(const std::string &filePath);
+    [[nodiscard]] bool LoadFromFile(const std::string &filePath);
 
     [[nodiscard]] bool SaveToFile(const std::string &filePath) const;
 

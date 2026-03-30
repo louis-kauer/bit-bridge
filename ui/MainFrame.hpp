@@ -43,7 +43,7 @@ private:
 
     void MarkSaved();
 
-    static bool ValidateInput(const wxString &name, const wxString &ip, const wxString &port, const wxString &weight);
+    [[nodiscard]] static bool ValidateInput(const wxString &name, const wxString &ip, const wxString &port, const wxString &weight);
 
     std::unique_ptr<AppSettings> m_settings;
     std::unique_ptr<LoadBalancerConfig> m_config;

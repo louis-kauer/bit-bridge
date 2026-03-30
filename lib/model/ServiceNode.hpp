@@ -39,7 +39,7 @@ public:
     [[nodiscard]] bool IsValid() const;
 
 private:
-    static bool IsValidIpv4(const std::string &ip);
+    [[nodiscard]] static bool IsValidIpv4(const std::string &ip);
 
     std::string m_name;
     std::string m_ip;

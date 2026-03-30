@@ -33,7 +33,7 @@ bool ServiceNode::IsValid() const {
 bool ServiceNode::IsValidIpv4(const std::string &ip) {
     std::istringstream stream(ip);
     std::string token;
-    int octetCount = 0;
+    size_t octetCount = 0;
 
     while (std::getline(stream, token, '.')) {
         if (token.empty() || token.size() > 3) {
