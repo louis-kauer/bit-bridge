@@ -8,6 +8,7 @@ add_executable(bit_bridge_lb
         routing/Xoshiro256.cpp
         routing/P2CStrategy.cpp
         routing/ConsistentHashStrategy.cpp
+        proxy/Session.cpp
 )
 
 target_include_directories(bit_bridge_lb PRIVATE
