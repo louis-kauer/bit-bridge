@@ -26,8 +26,11 @@ void TcpProxy::Start() {
 }
 
 void TcpProxy::Stop() {
-    boost::system::error_code ec;
-    m_acceptor.close(ec);
+    try {
+        m_acceptor.close();
+    } catch (const boost::system::system_error &e) {
+        std::println(stderr, "TcpProxy: acceptor close error: {}", e.what());
+    }
 }
 
 void TcpProxy::AcceptNext() {
