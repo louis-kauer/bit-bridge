@@ -20,7 +20,7 @@ TEST(ServiceNodeTest, ParameterizedConstructorSetsValues) {
 
 TEST(ServiceNodeTest, CopyConstructorCopiesAllFields) {
     ServiceNode original("web-1", "10.0.0.1", 443, 5);
-    ServiceNode copy(original);
+    const ServiceNode copy = original;
     EXPECT_EQ(copy.GetName(), "web-1");
     EXPECT_EQ(copy.GetIp(), "10.0.0.1");
     EXPECT_EQ(copy.GetPort(), 443);
