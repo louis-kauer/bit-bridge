@@ -3,6 +3,7 @@
 
 #include "IRoutingStrategy.hpp"
 
+#include <cstdint>
 #include <utility>
 #include <vector>
 
