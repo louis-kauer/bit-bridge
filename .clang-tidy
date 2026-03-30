@@ -29,7 +29,8 @@ Checks: >
   -bugprone-empty-catch,
   -readability-redundant-string-init,
   -cppcoreguidelines-avoid-c-arrays,
-  -modernize-avoid-c-arrays
+  -modernize-avoid-c-arrays,
+  -bugprone-exception-escape
 
 HeaderFilterRegex: '(lib|core|ui)/.*'
 
@@ -38,5 +39,5 @@ CheckOptions:
     value: CamelCase
   - key: readability-identifier-naming.MemberPrefix
     value: 'm_'
-  - key: readability-identifier-naming.MethodCase
-    value: CamelCase
+  - key: readability-identifier-naming.TypeAliasIgnoredRegexp
+    value: 'is_transparent'

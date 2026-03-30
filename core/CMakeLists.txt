@@ -9,6 +9,7 @@ add_executable(bit_bridge_lb
         routing/P2CStrategy.cpp
         routing/ConsistentHashStrategy.cpp
         proxy/Session.cpp
+        proxy/TcpProxy.cpp
 )
 
 target_include_directories(bit_bridge_lb PRIVATE
