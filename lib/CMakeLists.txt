@@ -1,4 +1,5 @@
 # lib/ — shared model + serialization library
+
 add_library(bitbridge_lib STATIC
         model/ServiceNode.cpp
         model/HealthCheckConfig.cpp
