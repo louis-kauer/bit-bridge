@@ -9,6 +9,7 @@ class ConsistentHashStrategyTest : public ::testing::Test {
 protected:
     [[nodiscard]] static std::vector<ServiceNode> MakeNodes(size_t count) {
         std::vector<ServiceNode> nodes;
+        nodes.reserve(count);
         for (size_t i = 0; i < count; ++i) {
             nodes.emplace_back(
                 std::format("svc-{}", i),
