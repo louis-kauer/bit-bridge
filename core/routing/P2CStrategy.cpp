@@ -8,7 +8,7 @@ P2CStrategy::P2CStrategy()
     : m_rng(std::random_device{}()) {
 }
 
-P2CStrategy::P2CStrategy(uint64_t seed)
+P2CStrategy::P2CStrategy(const uint64_t seed)
     : m_rng(seed) {
 }
 
@@ -19,7 +19,7 @@ P2CStrategy::P2CStrategy(const P2CStrategy &other)
 
 P2CStrategy::P2CStrategy(P2CStrategy &&other) noexcept
     : IRoutingStrategy(std::move(other))
-      , m_rng(other.m_rng) {
+      , m_rng(std::move(other.m_rng)) {
 }
 
 P2CStrategy &P2CStrategy::operator=(const P2CStrategy &other) {
@@ -33,7 +33,7 @@ P2CStrategy &P2CStrategy::operator=(const P2CStrategy &other) {
 P2CStrategy &P2CStrategy::operator=(P2CStrategy &&other) noexcept {
     if (this != &other) {
         IRoutingStrategy::operator=(std::move(other));
-        m_rng = other.m_rng;
+        m_rng = std::move(other.m_rng);
     }
     return *this;
 }
@@ -56,19 +56,19 @@ std::expected<size_t, RoutingError> P2CStrategy::SelectService(
         return std::unexpected(RoutingError::NoHealthyServices);
     }
     if (healthy.size() == 1) {
-        return healthy[0];
+        return healthy.at(0);
     }
 
     std::uniform_int_distribution<size_t> dist(0, healthy.size() - 1);
-    size_t a = dist(m_rng);
+    const size_t a = dist(m_rng);
     size_t b = dist(m_rng);
-    while (b == a) {
+    while (b == a) { // NOLINT(bugprone-infinite-loop)
         b = dist(m_rng);
     }
 
-    if (pool.GetService(healthy[a]).GetActiveConnections() <=
-        pool.GetService(healthy[b]).GetActiveConnections()) {
-        return healthy[a];
+    if (pool.GetService(healthy.at(a)).GetActiveConnections() <=
+        pool.GetService(healthy.at(b)).GetActiveConnections()) {
+        return healthy.at(a);
     }
-    return healthy[b];
+    return healthy.at(b);
 }

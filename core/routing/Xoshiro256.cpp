@@ -22,7 +22,7 @@ Xoshiro256StarStar::result_type Xoshiro256StarStar::operator()() {
     return result;
 }
 
-constexpr uint64_t Xoshiro256StarStar::RotateLeft(uint64_t x, unsigned int k) {
+constexpr uint64_t Xoshiro256StarStar::RotateLeft(const uint64_t x, const unsigned int k) {
     return (x << k) | (x >> (64 - k));
 }
 

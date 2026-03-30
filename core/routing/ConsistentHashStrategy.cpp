@@ -23,7 +23,7 @@ ConsistentHashStrategy::ConsistentHashStrategy(const ServicePool &pool) {
 
     // Runtime collision check — fail loudly in all builds
     for (size_t i = 1; i < m_ring.size(); ++i) {
-        if (m_ring[i].first == m_ring[i - 1].first) {
+        if (m_ring.at(i).first == m_ring.at(i - 1).first) {
             std::println(stderr, "Fatal: hash collision at vnode {} — ring integrity compromised", i);
             throw HashCollisionError(i);
         }
@@ -31,7 +31,7 @@ ConsistentHashStrategy::ConsistentHashStrategy(const ServicePool &pool) {
 }
 
 std::expected<size_t, RoutingError> ConsistentHashStrategy::SelectService(
-    const ServicePool &pool, std::string_view routingKey) {
+    const ServicePool &pool, const std::string_view routingKey) {
     if (pool.GetSize() == 0 || m_ring.empty()) {
         return std::unexpected(RoutingError::PoolEmpty);
     }
@@ -46,8 +46,8 @@ std::expected<size_t, RoutingError> ConsistentHashStrategy::SelectService(
 
     for (size_t walked = 0; walked < ringSize; ++walked) {
         size_t idx = (startIdx + walked) % ringSize;
-        if (pool.GetService(m_ring[idx].second).IsHealthy()) {
-            return m_ring[idx].second;
+        if (pool.GetService(m_ring.at(idx).second).IsHealthy()) {
+            return m_ring.at(idx).second;
         }
     }
 

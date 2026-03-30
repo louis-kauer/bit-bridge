@@ -6,7 +6,7 @@
 
 class HashCollisionError : public std::runtime_error {
 public:
-    explicit HashCollisionError(size_t vnodeIndex)
+    explicit HashCollisionError(const size_t vnodeIndex)
         : std::runtime_error("Hash ring collision detected at vnode " + std::to_string(vnodeIndex)) {
     }
 };
