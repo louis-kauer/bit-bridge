@@ -6,6 +6,9 @@ set(CORE_TEST_SOURCES
         core/state/ServicePoolTest.cpp
         core/routing/P2CStrategyTest.cpp
         core/routing/ConsistentHashStrategyTest.cpp
+        core/proxy/SessionTest.cpp
+        core/proxy/TcpProxyTest.cpp
+        core/health/HealthCheckerTest.cpp
 )
 
 set(LIB_TEST_SOURCES
@@ -22,6 +25,9 @@ set(CORE_SOURCES
         ${CMAKE_SOURCE_DIR}/core/routing/Xoshiro256.cpp
         ${CMAKE_SOURCE_DIR}/core/routing/P2CStrategy.cpp
         ${CMAKE_SOURCE_DIR}/core/routing/ConsistentHashStrategy.cpp
+        ${CMAKE_SOURCE_DIR}/core/proxy/Session.cpp
+        ${CMAKE_SOURCE_DIR}/core/proxy/TcpProxy.cpp
+        ${CMAKE_SOURCE_DIR}/core/health/HealthChecker.cpp
 )
 
 add_executable(bit_bridge_tests
