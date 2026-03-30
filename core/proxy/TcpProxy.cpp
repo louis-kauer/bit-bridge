@@ -1,4 +1,5 @@
 #include "TcpProxy.hpp"
+#include "ServicePool.hpp"
 #include "Session.hpp"
 
 #include <print>
@@ -8,11 +9,11 @@ using tcp = asio::ip::tcp;
 
 TcpProxy::TcpProxy(asio::io_context &ioContext,
                    const std::string &address,
-                   uint16_t port,
+                   const uint16_t port,
                    ServicePool &pool,
                    IRoutingStrategy &strategy,
-                   uint32_t connectTimeoutMs,
-                   uint32_t idleTimeoutMs)
+                   const uint32_t connectTimeoutMs,
+                   const uint32_t idleTimeoutMs)
     : m_acceptor(ioContext, tcp::endpoint(asio::ip::make_address(address), port))
       , m_pool(pool)
       , m_strategy(strategy)

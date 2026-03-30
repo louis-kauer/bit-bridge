@@ -2,10 +2,8 @@
 #define BIT_BRIDGE_TCP_PROXY_HPP
 
 #include "IRoutingStrategy.hpp"
-#include "ServicePool.hpp"
 
 #include <boost/asio.hpp>
-#include <memory>
 #include <string>
 
 class TcpProxy {

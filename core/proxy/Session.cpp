@@ -7,8 +7,8 @@ using tcp = asio::ip::tcp;
 
 Session::Session(tcp::socket clientSocket,
                  ServiceState &backend,
-                 uint32_t connectTimeoutMs,
-                 uint32_t idleTimeoutMs)
+                 const uint32_t connectTimeoutMs,
+                 const uint32_t idleTimeoutMs)
     : m_clientSocket(std::move(clientSocket))
       , m_backendSocket(m_clientSocket.get_executor())
       , m_connectTimer(m_clientSocket.get_executor())
@@ -28,7 +28,7 @@ void Session::Start() {
 
 void Session::ConnectToBackend() {
     const auto &node = m_backend.GetNode();
-    tcp::endpoint endpoint(asio::ip::make_address(node.GetIp()), node.GetPort());
+    const tcp::endpoint endpoint(asio::ip::make_address(node.GetIp()), node.GetPort());
 
     m_connectTimer.expires_after(std::chrono::milliseconds(m_connectTimeoutMs));
     m_connectTimer.async_wait([self = shared_from_this()](const boost::system::error_code &ec) {
@@ -68,7 +68,7 @@ void Session::ReadFromClient() {
 
     m_clientSocket.async_read_some(
         asio::buffer(m_clientBuf),
-        [self = shared_from_this()](const boost::system::error_code &ec, size_t bytes) {
+        [self = shared_from_this()](const boost::system::error_code &ec, const size_t bytes) {
             if (ec) {
                 self->Shutdown();
                 return;
@@ -88,7 +88,7 @@ void Session::ReadFromClient() {
 void Session::ReadFromBackend() {
     m_backendSocket.async_read_some(
         asio::buffer(m_backendBuf),
-        [self = shared_from_this()](const boost::system::error_code &ec, size_t bytes) {
+        [self = shared_from_this()](const boost::system::error_code &ec, const size_t bytes) {
             if (ec) {
                 self->Shutdown();
                 return;
