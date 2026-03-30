@@ -7,24 +7,17 @@ on:
 
 jobs:
   release-linux:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
+    container: ghcr.io/${{ github.repository }}/ci:latest
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: amd64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
     steps:
       - uses: actions/checkout@v6
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libwxgtk3.2-dev libyaml-cpp-dev cmake build-essential
-
-      - name: Install tomlplusplus
-        run: |
-          git clone --depth 1 --branch v3.4.0 https://github.com/marzer/tomlplusplus.git /tmp/tomlplusplus
-          cd /tmp/tomlplusplus && cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local && cmake --build build && sudo cmake --install build
-
-      - name: Install googletest
-        run: |
-          git clone --depth 1 --branch v1.17.0 https://github.com/google/googletest.git /tmp/googletest
-          cd /tmp/googletest && cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local && cmake --build build && sudo cmake --install build
 
       - name: Build release
         run: make release
@@ -35,19 +28,31 @@ jobs:
       - name: Package
         run: |
           mkdir -p dist
-          cp cmake-build-release/ui/bit_bridge dist/bit_bridge-linux-amd64
-          cp cmake-build-release/core/bit_bridge_lb dist/bit_bridge_lb-linux-amd64
+          cp cmake-build-release/ui/bit_bridge dist/bit_bridge-linux-${{ matrix.arch }}
+          cp cmake-build-release/core/bit_bridge_lb dist/bit_bridge_lb-linux-${{ matrix.arch }}
           cp bitbridge-settings.toml dist/
-          tar -czf bit-bridge-${{ github.ref_name }}-linux-amd64.tar.gz -C dist .
+          tar -czf bit-bridge-${{ github.ref_name }}-linux-${{ matrix.arch }}.tar.gz -C dist .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: bit-bridge-${{ github.ref_name }}-linux-amd64
-          path: bit-bridge-${{ github.ref_name }}-linux-amd64.tar.gz
+          name: bit-bridge-${{ github.ref_name }}-linux-${{ matrix.arch }}
+          path: bit-bridge-${{ github.ref_name }}-linux-${{ matrix.arch }}.tar.gz
+
+  github-release:
+    needs: release-linux
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: bit-bridge-${{ github.ref_name }}-linux-*
+          merge-multiple: true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: bit-bridge-${{ github.ref_name }}-linux-amd64.tar.gz
+          files: bit-bridge-${{ github.ref_name }}-linux-*.tar.gz
           generate_release_notes: true
