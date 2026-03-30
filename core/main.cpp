@@ -5,6 +5,7 @@
 #include "ConsistentHashStrategy.hpp"
 #include "IRoutingStrategy.hpp"
 #include "TcpProxy.hpp"
+#include "HealthChecker.hpp"
 
 #include <boost/asio.hpp>
 #include <memory>
@@ -65,6 +66,12 @@ int main(int argc, char *argv[]) {
         );
 
         proxy.Start();
+
+        if (const auto &hc = config.GetHealthCheck(); hc.GetEnabled()) {
+            HealthChecker healthChecker(ioContext, pool, hc);
+            healthChecker.Start();
+            std::println("Health checker enabled (interval: {}ms)", hc.GetIntervalMs());
+        }
 
         std::println("Bit Bridge LB — {}", config.GetName());
         std::println("  Listen:    {}:{}", config.GetListenAddress(), config.GetListenPort());

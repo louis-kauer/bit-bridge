@@ -10,6 +10,7 @@ add_executable(bit_bridge_lb
         routing/ConsistentHashStrategy.cpp
         proxy/Session.cpp
         proxy/TcpProxy.cpp
+        health/HealthChecker.cpp
 )
 
 target_include_directories(bit_bridge_lb PRIVATE
