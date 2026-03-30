@@ -4,7 +4,7 @@
 
 bool BitBridgeApp::OnInit() {
     auto settings = std::make_unique<AppSettings>();
-    settings->LoadFromFile("bitbridge-settings.toml");
+    std::ignore = settings->LoadFromFile("bitbridge-settings.toml");
 
     auto *frame = new MainFrame("Bit Bridge - Load Balancer Configuration",
                                 wxPoint(50, 50),
