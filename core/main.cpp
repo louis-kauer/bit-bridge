@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
             healthChecker = std::make_unique<HealthChecker>(ioContext, pool, hc);
         }
 
-        boost::asio::signal_set signals(ioContext, SIGINT, SIGTERM);
+        boost::asio::signal_set signals(ioContext, SIGINT, SIGTERM); // NOLINT(cppcoreguidelines-init-variables)
         signals.async_wait([&proxy, &healthChecker](const boost::system::error_code &ec, int signum) {
             if (ec) {
                 return;
