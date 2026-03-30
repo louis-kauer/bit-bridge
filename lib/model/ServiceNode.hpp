@@ -8,7 +8,7 @@ class ServiceNode {
 public:
     ServiceNode();
 
-    ServiceNode(const std::string &name, const std::string &ip, uint16_t port, uint16_t weight);
+    ServiceNode(std::string name, std::string ip, uint16_t port, uint16_t weight);
 
     ServiceNode(const ServiceNode &other) = default;
 

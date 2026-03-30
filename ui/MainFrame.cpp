@@ -5,6 +5,7 @@
 #include <wx/filename.h>
 #include <wx/statline.h>
 #include <array>
+#include <ranges>
 #include <vector>
 
 MainFrame::MainFrame(const wxString &title, const wxPoint &pos, const wxSize &size,
@@ -289,8 +290,8 @@ void MainFrame::OnRemoveService([[maybe_unused]] wxCommandEvent &event) {
     }
 
     // Remove in reverse order so indices stay valid
-    for (auto it = selected.rbegin(); it != selected.rend(); ++it) {
-        m_config->RemoveService(static_cast<size_t>(*it));
+    for (const auto &idx : std::ranges::reverse_view(selected)) {
+        m_config->RemoveService(static_cast<size_t>(idx));
     }
 
     RefreshServiceList();
