@@ -9,9 +9,9 @@ ServicePool::ServicePool(const std::vector<ServiceNode> &services) {
 
 size_t ServicePool::GetSize() const { return m_services.size(); }
 
-ServiceState &ServicePool::GetService(size_t index) { return m_services.at(index); }
+ServiceState &ServicePool::GetService(const size_t index) { return m_services.at(index); }
 
-const ServiceState &ServicePool::GetService(size_t index) const { return m_services.at(index); }
+const ServiceState &ServicePool::GetService(const size_t index) const { return m_services.at(index); }
 
 size_t ServicePool::GetHealthyCount() const {
     size_t count = 0;

@@ -1,7 +1,7 @@
 #include "ServiceState.hpp"
 
-ServiceState::ServiceState(const ServiceNode &node)
-    : m_node(node) {
+ServiceState::ServiceState(ServiceNode node)
+    : m_node(std::move(node)) {
 }
 
 ServiceState::ServiceState(const ServiceState &other)
@@ -62,7 +62,7 @@ void ServiceState::DecrementConnections() {
     m_activeConnections.fetch_sub(1, std::memory_order_relaxed);
 }
 
-void ServiceState::SetHealthy(bool healthy) {
+void ServiceState::SetHealthy(const bool healthy) {
     m_healthy.store(healthy, std::memory_order_relaxed);
 }
 

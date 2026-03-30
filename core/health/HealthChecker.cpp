@@ -43,13 +43,13 @@ void HealthChecker::ProbeAll() {
     }
 }
 
-void HealthChecker::OnProbeResult(size_t index,
+void HealthChecker::OnProbeResult(const size_t index,
                                   const std::shared_ptr<tcp::socket> &socket,
                                   const boost::system::error_code &ec) {
     ServiceState &svc = m_pool.GetService(index);
     if (ec) {
         svc.IncrementFailures();
-        if (const bool thresholdReached = svc.GetConsecutiveFailures() >= m_config.GetUnhealthyThreshold();
+        if (const bool thresholdReached = svc.GetConsecutiveFailures() >= m_config.GetUnhealthyThreshold(); // NOLINT(cppcoreguidelines-init-variables)
             thresholdReached && svc.IsHealthy()) {
             std::println(stderr, "HealthChecker: {} marked unhealthy", svc.GetNode().GetName());
             svc.SetHealthy(false);
@@ -86,7 +86,7 @@ void HealthChecker::ProbeOne(size_t index) {
         }
     });
 
-    tcp::endpoint endpoint(asio::ip::make_address(node.GetIp()), node.GetPort());
+    const tcp::endpoint endpoint(asio::ip::make_address(node.GetIp()), node.GetPort());
     socket->async_connect(endpoint,
                           [this, index, socket, timer](const boost::system::error_code &ec) {
                               timer->cancel();

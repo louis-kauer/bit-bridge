@@ -2,12 +2,11 @@
 #define BIT_BRIDGE_SERVICE_STATE_HPP
 
 #include <atomic>
-#include <cstddef>
 #include "ServiceNode.hpp"
 
 class ServiceState {
 public:
-    explicit ServiceState(const ServiceNode &node);
+    explicit ServiceState(ServiceNode node);
 
     ServiceState(const ServiceState &other);
 

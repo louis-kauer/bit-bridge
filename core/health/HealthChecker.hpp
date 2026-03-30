@@ -6,7 +6,6 @@
 
 #include <boost/asio.hpp>
 #include <memory>
-#include <thread>
 
 class HealthChecker {
 public:
