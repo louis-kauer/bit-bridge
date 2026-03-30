@@ -25,6 +25,11 @@ void TcpProxy::Start() {
     AcceptNext();
 }
 
+void TcpProxy::Stop() {
+    boost::system::error_code ec;
+    m_acceptor.close(ec);
+}
+
 void TcpProxy::AcceptNext() {
     m_acceptor.async_accept(
         [this](const boost::system::error_code &ec, tcp::socket clientSocket) {

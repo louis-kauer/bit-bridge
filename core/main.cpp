@@ -11,6 +11,8 @@
 #include <memory>
 #include <print>
 #include <string>
+#include <unordered_map>
+#include <functional>
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
@@ -36,6 +38,7 @@ int main(int argc, char *argv[]) {
         ServicePool pool(config.GetServices());
 
         const std::unordered_map<std::string, std::function<std::unique_ptr<IRoutingStrategy>()> > strategyFactory{
+            // NOSONAR cpp:S6045
             {"p2c", []() -> std::unique_ptr<IRoutingStrategy> { return std::make_unique<P2CStrategy>(); }},
             {
                 "consistent-hash",
@@ -65,19 +68,35 @@ int main(int argc, char *argv[]) {
             conn.GetIdleTimeoutMs()
         );
 
-        proxy.Start();
+        const auto &hc = config.GetHealthCheck();
+        std::unique_ptr<HealthChecker> healthChecker;
+        if (hc.GetEnabled()) {
+            healthChecker = std::make_unique<HealthChecker>(ioContext, pool, hc);
+        }
 
-        if (const auto &hc = config.GetHealthCheck(); hc.GetEnabled()) {
-            HealthChecker healthChecker(ioContext, pool, hc);
-            healthChecker.Start();
+        boost::asio::signal_set signals(ioContext, SIGINT, SIGTERM);
+        signals.async_wait([&proxy, &healthChecker](const boost::system::error_code &ec, int signum) {
+            if (ec) {
+                return;
+            }
+            std::println("\nSignal {}: shutting down", signum);
+            if (healthChecker) {
+                healthChecker->Stop();
+            }
+            proxy.Stop();
+        });
+
+        proxy.Start();
+        if (healthChecker) {
+            healthChecker->Start();
             std::println("Health checker enabled (interval: {}ms)", hc.GetIntervalMs());
         }
 
-        std::println("Bit Bridge LB — {}", config.GetName());
+        std::println("Bit Bridge LB - {}", config.GetName());
         std::println("  Listen:    {}:{}", config.GetListenAddress(), config.GetListenPort());
         std::println("  Algorithm: {}", config.GetRoutingAlgorithm());
         std::println("  Services:  {}", config.GetServiceCount());
-        for (const auto &svc: config.GetServices()) {
+        for (const auto &svc : config.GetServices()) {
             std::println("    - {} ({}:{})", svc.GetName(), svc.GetIp(), svc.GetPort());
         }
 
