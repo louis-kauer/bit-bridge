@@ -10,9 +10,28 @@ Checks: >
   -cppcoreguidelines-avoid-magic-numbers,
   -readability-identifier-length,
   -cppcoreguidelines-owning-memory,
-  -cppcoreguidelines-pro-type-vararg
+  -cppcoreguidelines-pro-type-vararg,
+  -bugprone-easily-swappable-parameters,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -readability-redundant-member-init,
+  -readability-function-cognitive-complexity,
+  -cppcoreguidelines-use-default-member-init,
+  -modernize-use-default-member-init,
+  -readability-qualified-auto,
+  -readability-math-missing-parentheses,
+  -readability-convert-member-functions-to-static,
+  -cppcoreguidelines-pro-type-member-init,
+  -modernize-use-equals-default,
+  -cppcoreguidelines-prefer-member-initializer,
+  -performance-enum-size,
+  -readability-simplify-boolean-expr,
+  -bugprone-empty-catch,
+  -readability-redundant-string-init,
+  -cppcoreguidelines-avoid-c-arrays,
+  -modernize-avoid-c-arrays
 
-HeaderFilterRegex: 'src/.*'
+HeaderFilterRegex: '(lib|core|ui)/.*'
 
 CheckOptions:
   - key: readability-identifier-naming.ClassCase

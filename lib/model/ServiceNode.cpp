@@ -1,17 +1,16 @@
 #include "ServiceNode.hpp"
 
 #include <sstream>
+#include <utility>
 
 ServiceNode::ServiceNode()
-    : m_name("")
-      , m_ip("")
-      , m_port(0)
+    : m_port(0)
       , m_weight(1) {
 }
 
-ServiceNode::ServiceNode(const std::string &name, const std::string &ip, uint16_t port, uint16_t weight)
-    : m_name(name)
-      , m_ip(ip)
+ServiceNode::ServiceNode(std::string name, std::string ip, uint16_t port, uint16_t weight)
+    : m_name(std::move(name))
+      , m_ip(std::move(ip))
       , m_port(port)
       , m_weight(weight) {
 }
@@ -33,7 +32,7 @@ bool ServiceNode::IsValid() const {
 bool ServiceNode::IsValidIpv4(const std::string &ip) {
     std::istringstream stream(ip);
     std::string token;
-    int octetCount = 0;
+    size_t octetCount = 0;
 
     while (std::getline(stream, token, '.')) {
         if (token.empty() || token.size() > 3) {

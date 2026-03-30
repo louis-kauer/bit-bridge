@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(bit_bridge)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # --- Shared dependency ---
@@ -11,7 +11,7 @@ find_package(yaml-cpp REQUIRED)
 add_subdirectory(lib)
 add_subdirectory(core)
 
-# UI and tests are optional — skip if wxWidgets not available
+# UI and tests are optional — skip in CI if wxWidgets not available
 find_package(wxWidgets COMPONENTS net core base)
 if (wxWidgets_FOUND)
     if (wxWidgets_USE_FILE)
@@ -21,7 +21,7 @@ if (wxWidgets_FOUND)
     add_subdirectory(ui)
 endif ()
 
-# --- Tests (optional — requires GTest) ---
+# --- Tests (optional — skip in CI if not available) ---
 enable_testing()
 option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
 find_package(GTest QUIET)

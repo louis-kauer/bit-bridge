@@ -33,10 +33,10 @@ TEST_F(YamlConfigSerializerTest, SaveAndLoadRoundTrip) {
     original.SetConnection(ConnectionConfig(512, 60000, 10000));
 
     YamlConfigSerializer serializer;
-    ASSERT_TRUE(serializer.Save(original, m_testFile));
+    ASSERT_TRUE(serializer.Save(original, m_testFile).has_value());
 
     LoadBalancerConfig loaded;
-    ASSERT_TRUE(serializer.Load(loaded, m_testFile));
+    ASSERT_TRUE(serializer.Load(loaded, m_testFile).has_value());
 
     EXPECT_EQ(loaded.GetName(), "test-cluster");
     EXPECT_EQ(loaded.GetListenAddress(), "127.0.0.1");
@@ -57,17 +57,17 @@ TEST_F(YamlConfigSerializerTest, SaveAndLoadRoundTrip) {
 TEST_F(YamlConfigSerializerTest, SaveEmptyServicesList) {
     LoadBalancerConfig config;
     YamlConfigSerializer serializer;
-    ASSERT_TRUE(serializer.Save(config, m_testFile));
+    ASSERT_TRUE(serializer.Save(config, m_testFile).has_value());
 
     LoadBalancerConfig loaded;
-    ASSERT_TRUE(serializer.Load(loaded, m_testFile));
+    ASSERT_TRUE(serializer.Load(loaded, m_testFile).has_value());
     EXPECT_EQ(loaded.GetServiceCount(), 0);
 }
 
 TEST_F(YamlConfigSerializerTest, LoadFromNonexistentFileReturnsFalse) {
     YamlConfigSerializer serializer;
     LoadBalancerConfig config;
-    EXPECT_FALSE(serializer.Load(config, "nonexistent/path/config.yaml"));
+    EXPECT_FALSE(serializer.Load(config, "nonexistent/path/config.yaml").has_value());
 }
 
 TEST_F(YamlConfigSerializerTest, LoadFromMalformedYamlReturnsFalse) {
@@ -77,7 +77,7 @@ TEST_F(YamlConfigSerializerTest, LoadFromMalformedYamlReturnsFalse) {
 
     YamlConfigSerializer serializer;
     LoadBalancerConfig config;
-    EXPECT_FALSE(serializer.Load(config, m_testFile));
+    EXPECT_FALSE(serializer.Load(config, m_testFile).has_value());
 }
 
 TEST_F(YamlConfigSerializerTest, LoadFromEmptyFileUsesDefaults) {
@@ -86,7 +86,7 @@ TEST_F(YamlConfigSerializerTest, LoadFromEmptyFileUsesDefaults) {
 
     YamlConfigSerializer serializer;
     LoadBalancerConfig config;
-    EXPECT_TRUE(serializer.Load(config, m_testFile));
+    EXPECT_TRUE(serializer.Load(config, m_testFile).has_value());
     EXPECT_EQ(config.GetServiceCount(), 0);
 }
 
@@ -94,7 +94,7 @@ TEST_F(YamlConfigSerializerTest, SaveCreatesParentDirectories) {
     LoadBalancerConfig config;
     YamlConfigSerializer serializer;
     std::string nestedPath = m_testDir + "/nested/deep/config.yaml";
-    ASSERT_TRUE(serializer.Save(config, nestedPath));
+    ASSERT_TRUE(serializer.Save(config, nestedPath).has_value());
     EXPECT_TRUE(std::filesystem::exists(nestedPath));
 }
 
@@ -105,7 +105,7 @@ TEST_F(YamlConfigSerializerTest, LoadPartialYamlUsesDefaults) {
 
     YamlConfigSerializer serializer;
     LoadBalancerConfig config;
-    ASSERT_TRUE(serializer.Load(config, m_testFile));
+    ASSERT_TRUE(serializer.Load(config, m_testFile).has_value());
     EXPECT_EQ(config.GetName(), "partial-config");
     EXPECT_EQ(config.GetListenPort(), 3000);
     EXPECT_EQ(config.GetServiceCount(), 0);

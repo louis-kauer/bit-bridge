@@ -5,6 +5,7 @@
 #include <wx/filename.h>
 #include <wx/statline.h>
 #include <array>
+#include <ranges>
 #include <vector>
 
 MainFrame::MainFrame(const wxString &title, const wxPoint &pos, const wxSize &size,
@@ -203,7 +204,7 @@ void MainFrame::LoadExistingConfig() {
         return;
     }
 
-    if (m_serializer->Load(*m_config, configPath)) {
+    if (m_serializer->Load(*m_config, configPath).has_value()) {
         RefreshServiceList();
         MarkSaved();
         SetStatusText(wxString::Format("Configuration loaded from %s", configPath.c_str()));
@@ -289,8 +290,8 @@ void MainFrame::OnRemoveService([[maybe_unused]] wxCommandEvent &event) {
     }
 
     // Remove in reverse order so indices stay valid
-    for (auto it = selected.rbegin(); it != selected.rend(); ++it) {
-        m_config->RemoveService(static_cast<size_t>(*it));
+    for (const auto &idx : std::ranges::reverse_view(selected)) {
+        m_config->RemoveService(static_cast<size_t>(idx));
     }
 
     RefreshServiceList();
@@ -310,7 +311,7 @@ void MainFrame::OnLoadConfig([[maybe_unused]] wxCommandEvent &event) {
         return;
     }
 
-    if (auto newConfig = std::make_unique<LoadBalancerConfig>(); m_serializer->Load(*newConfig, configPath)) {
+    if (auto newConfig = std::make_unique<LoadBalancerConfig>(); m_serializer->Load(*newConfig, configPath).has_value()) {
         m_config = std::move(newConfig);
         RefreshServiceList();
         MarkSaved();
@@ -322,7 +323,7 @@ void MainFrame::OnLoadConfig([[maybe_unused]] wxCommandEvent &event) {
 }
 
 void MainFrame::OnSaveConfig([[maybe_unused]] wxCommandEvent &event) {
-    if (const std::string configPath = m_settings->GetConfigFilePath(); m_serializer->Save(*m_config, configPath)) {
+    if (const std::string configPath = m_settings->GetConfigFilePath(); m_serializer->Save(*m_config, configPath).has_value()) {
         MarkSaved();
         SetStatusText(wxString::Format("Configuration saved to %s", configPath.c_str()));
     } else {
