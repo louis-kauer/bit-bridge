@@ -5,11 +5,11 @@ echo "Running pre-push checks..."
 
 echo "[1/4] GCC cross-compile check (Docker)..."
 if command -v docker > /dev/null 2>&1; then
-    if ! docker run --rm \
+    if ! docker run --rm --platform linux/amd64 \
         -v "$(pwd)":/workspace \
         -w /workspace \
         ghcr.io/louis-kauer/bit-bridge/ci:latest \
-        sh -c "cmake -S . -B cmake-build-gcc -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=g++-14 -DCMAKE_C_COMPILER=gcc-14 > /dev/null 2>&1 && cmake --build cmake-build-gcc -j2 > /dev/null 2>&1"; then
+        sh -c "cmake -S . -B /tmp/cmake-build-gcc -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=g++-14 -DCMAKE_C_COMPILER=gcc-14 > /dev/null 2>&1 && cmake --build /tmp/cmake-build-gcc -j2 > /dev/null 2>&1"; then
         echo "GCC cross-compile failed. Push aborted."
         exit 1
     fi
