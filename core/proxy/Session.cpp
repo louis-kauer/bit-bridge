@@ -1,6 +1,7 @@
 #include "Session.hpp"
 
 #include <print>
+#include <cstdio>
 
 namespace asio = boost::asio;
 using tcp = asio::ip::tcp;

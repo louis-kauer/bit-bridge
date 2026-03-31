@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <format>
 #include <print>
+#include <cstdio>
 #include <ranges>
 #include <string>
 
@@ -38,7 +39,7 @@ std::expected<size_t, RoutingError> ConsistentHashStrategy::SelectService(
 
     const uint64_t hash = fnv::Hash64(routingKey);
 
-    const auto it = std::ranges::upper_bound(
+    const auto it = std::ranges::lower_bound(
         m_ring, hash, {}, &std::pair<uint64_t, size_t>::first);
 
     const auto startIdx = static_cast<size_t>(std::distance(m_ring.begin(), it));

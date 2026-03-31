@@ -59,7 +59,14 @@ void ServiceState::IncrementConnections() {
 }
 
 void ServiceState::DecrementConnections() {
-    m_activeConnections.fetch_sub(1, std::memory_order_relaxed);
+    size_t current = m_activeConnections.load(std::memory_order_relaxed);
+    while (current > 0) {
+        if (m_activeConnections.compare_exchange_weak(current, current - 1,
+                                                      std::memory_order_relaxed,
+                                                      std::memory_order_relaxed)) {
+            return;
+        }
+    }
 }
 
 void ServiceState::SetHealthy(const bool healthy) {

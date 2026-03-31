@@ -10,6 +10,7 @@
 #include <boost/asio.hpp>
 #include <memory>
 #include <print>
+#include <cstdio>
 #include <string>
 #include <unordered_map>
 #include <functional>
