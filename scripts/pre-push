@@ -9,7 +9,7 @@ if command -v docker > /dev/null 2>&1; then
         -v "$(pwd)":/workspace \
         -w /workspace \
         ghcr.io/louis-kauer/bit-bridge/ci:latest \
-        sh -c "make clean > /dev/null 2>&1 && make build > /dev/null 2>&1"; then
+        sh -c "cmake -S . -B cmake-build-gcc -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=g++-14 -DCMAKE_C_COMPILER=gcc-14 > /dev/null 2>&1 && cmake --build cmake-build-gcc -j2 > /dev/null 2>&1"; then
         echo "GCC cross-compile failed. Push aborted."
         exit 1
     fi
