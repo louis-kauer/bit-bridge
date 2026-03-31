@@ -2,6 +2,8 @@
 #include "P2CStrategy.hpp"
 #include "ServicePool.hpp"
 
+#include <array>
+
 TEST(P2CStrategyTest, ReturnsErrorOnEmptyPool) {
     P2CStrategy strategy(42);
     ServicePool pool;

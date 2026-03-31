@@ -5,6 +5,8 @@
 
 #include <boost/asio.hpp>
 #include <string>
+#include <array>
+#include <memory>
 
 namespace asio = boost::asio;
 using tcp = asio::ip::tcp;
