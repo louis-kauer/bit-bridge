@@ -53,3 +53,4 @@ _deps
 CMakeUserPresets.json
 .cache/
 
+bench/baselines/baseline.json
