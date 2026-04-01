@@ -72,6 +72,7 @@ jobs:
     permissions:
       contents: write
       packages: read
+      pull-requests: read
     container: ghcr.io/${{ github.repository }}/ci:latest
     steps:
       - uses: actions/checkout@v6
