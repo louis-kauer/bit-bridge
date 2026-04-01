@@ -16,6 +16,7 @@
 #include <chrono>
 #include <csignal>
 #include <cstdint> // NOLINT(misc-include-cleaner)
+#include <sys/wait.h>
 #include <functional>
 #include <unordered_map>
 #include <filesystem>
