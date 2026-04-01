@@ -84,7 +84,10 @@ jobs:
           else
             BASE="${{ github.event.before }}"
           fi
-          if git diff --name-only "$BASE" HEAD | grep -qE '^(core|bench)/'; then
+          git fetch --depth=1 origin "$BASE" 2>/dev/null || true
+          if git cat-file -e "$BASE" 2>/dev/null && git diff --name-only "$BASE" HEAD | grep -qE '^(core|bench)/'; then
+            echo "engine=true" >> "$GITHUB_OUTPUT"
+          elif ! git cat-file -e "$BASE" 2>/dev/null; then
             echo "engine=true" >> "$GITHUB_OUTPUT"
           else
             echo "engine=false" >> "$GITHUB_OUTPUT"
