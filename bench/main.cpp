@@ -56,7 +56,7 @@ struct BenchConfig {
     int m_backendDelayMs = 0;
     bool m_baseline = false;
     bool m_compare = false;
-    std::string m_baselineFile = "benchmarks/baseline.json";
+    std::string m_baselineFile = "bench/baselines/baseline.json";
 };
 
 struct AlgoResult {
@@ -687,7 +687,7 @@ SpawnEchoServices(asio::io_context &ioc, int count, int delayMs) {
             "  --services N          Backend count (default: 5)\n"
             "  --backend-delay-ms N  Simulated backend processing delay (default: 0)\n"
             "  --threshold-pct N     Regression threshold % (default: 15)\n"
-            "  --baseline-file P     Baseline JSON path (default: benchmarks/baseline.json)");
+            "  --baseline-file P     Baseline JSON path (default: bench/baselines/baseline.json)");
     }
     if (!std::filesystem::exists(cfg.m_lbBinary)) {
         Die("LB binary not found: {}", cfg.m_lbBinary);
