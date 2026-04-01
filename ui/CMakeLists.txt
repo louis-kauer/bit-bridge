@@ -1,4 +1,5 @@
-# ui/ — wxWidgets configuration tool
+# ui/ — UI Configuration Tool
+
 add_executable(bit_bridge
         main.cpp
         BitBridgeApp.cpp
