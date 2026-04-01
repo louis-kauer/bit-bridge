@@ -70,9 +70,10 @@ jobs:
     needs: build-lb
     runs-on: ubuntu-latest
     permissions:
-      contents: write
       packages: read
     container: ghcr.io/${{ github.repository }}/ci:latest
+    outputs:
+      engine: ${{ steps.filter.outputs.engine }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -97,8 +98,24 @@ jobs:
       - if: steps.filter.outputs.engine == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: make bench-cpp-update
       - if: steps.filter.outputs.engine == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
-        working-directory: ${{ github.workspace }}
-        run: |
+        uses: actions/upload-artifact@v4
+        with:
+          name: baseline
+          path: bench/baselines/baseline.json
+
+  bench-commit:
+    needs: bench
+    if: needs.bench.outputs.engine == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v4
+        with:
+          name: baseline
+          path: bench/baselines/
+      - run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add bench/baselines/baseline.json
