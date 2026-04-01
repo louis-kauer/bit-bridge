@@ -1,0 +1,37 @@
+{
+  "timestamp": "20260401_132633.742471",
+  "binary": "./cmake-build-release/core/bit_bridge_lb",
+  "concurrency": 50,
+  "requests": 1000,
+  "services": 3,
+  "results": {
+    "p2c": {
+      "completed": 1000,
+      "errors": 0,
+      "error_pct": 0,
+      "throughput_per_sec": 2402,
+      "peak_connections": 50,
+      "bytes_received": 187000,
+      "avg_ms": 20.62,
+      "min_ms": 10.35,
+      "p50_ms": 11.34,
+      "p95_ms": 121.87,
+      "p99_ms": 180.24,
+      "max_ms": 180.64
+    },
+    "consistent-hash": {
+      "completed": 1000,
+      "errors": 0,
+      "error_pct": 0,
+      "throughput_per_sec": 1833,
+      "peak_connections": 50,
+      "bytes_received": 187000,
+      "avg_ms": 26.81,
+      "min_ms": 8.19,
+      "p50_ms": 11.89,
+      "p95_ms": 150.76,
+      "p99_ms": 274.16,
+      "max_ms": 275.31
+    }
+  }
+}
