@@ -6,7 +6,7 @@ TEST(LoadBalancerConfigTest, DefaultConstructorSetsDefaults) {
     EXPECT_EQ(config.GetName(), "bit-bridge-cluster");
     EXPECT_EQ(config.GetListenAddress(), "0.0.0.0");
     EXPECT_EQ(config.GetListenPort(), 8080);
-    EXPECT_EQ(config.GetRoutingAlgorithm(), "power-of-two-choices");
+    EXPECT_EQ(config.GetRoutingAlgorithm(), "p2c");
     EXPECT_EQ(config.GetServiceCount(), 0);
 }
 

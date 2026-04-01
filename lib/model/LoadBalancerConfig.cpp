@@ -4,7 +4,7 @@ LoadBalancerConfig::LoadBalancerConfig()
     : m_name("bit-bridge-cluster")
       , m_listenAddress("0.0.0.0")
       , m_listenPort(8080)
-      , m_routingAlgorithm("power-of-two-choices")
+      , m_routingAlgorithm("p2c")
       , m_services()
       , m_healthCheck()
       , m_connection() {

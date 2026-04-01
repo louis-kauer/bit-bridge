@@ -9,7 +9,7 @@ config_file_path = "bitbridge-config.yaml"
 name = "bit-bridge-cluster"
 listen_address = "0.0.0.0"
 listen_port = 8080
-routing_algorithm = "power-of-two-choices"
+routing_algorithm = "p2c"
 
 [defaults.health_check]
 enabled = true
