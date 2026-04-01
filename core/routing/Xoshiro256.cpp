@@ -2,9 +2,9 @@
 
 Xoshiro256StarStar::Xoshiro256StarStar(uint64_t seed) {
     m_state[0] = SplitMix64(seed);
-    m_state[1] = SplitMix64(m_state[0]);
-    m_state[2] = SplitMix64(m_state[1]);
-    m_state[3] = SplitMix64(m_state[2]);
+    m_state[1] = SplitMix64(seed);
+    m_state[2] = SplitMix64(seed);
+    m_state[3] = SplitMix64(seed);
 }
 
 Xoshiro256StarStar::result_type Xoshiro256StarStar::operator()() {

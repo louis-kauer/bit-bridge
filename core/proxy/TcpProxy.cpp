@@ -71,14 +71,15 @@ void TcpProxy::OnAccept(tcp::socket clientSocket, const boost::system::error_cod
 
     const size_t backendIdx = *result;
     ServiceState &backend = m_pool.GetService(backendIdx);
-    backend.IncrementConnections();
 
-    std::make_shared<Session>(
+    auto session = std::make_shared<Session>(
         std::move(clientSocket),
         backend,
         m_connectTimeoutMs,
         m_idleTimeoutMs
-    )->Start();
+    );
+    backend.IncrementConnections();
+    session->Start();
 
     AcceptNext();
 }

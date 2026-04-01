@@ -115,17 +115,23 @@ void Session::Shutdown() {
     m_connectTimer.cancel();
     m_idleTimer.cancel();
 
-    try {
-        m_clientSocket.shutdown(tcp::socket::shutdown_both);
-        m_clientSocket.close();
-    } catch (const boost::system::system_error &e) {
-        std::println(stderr, "Session: client socket close error: {}", e.what());
+    boost::system::error_code ec;
+
+    m_clientSocket.shutdown(tcp::socket::shutdown_both, ec); // NOLINT(bugprone-unused-return-value)
+    if (ec) {
+        std::println(stderr, "Session: client socket shutdown error: {}", ec.message());
+    }
+    m_clientSocket.close(ec); // NOLINT(bugprone-unused-return-value)
+    if (ec) {
+        std::println(stderr, "Session: client socket close error: {}", ec.message());
     }
 
-    try {
-        m_backendSocket.shutdown(tcp::socket::shutdown_both);
-        m_backendSocket.close();
-    } catch (const boost::system::system_error &e) {
-        std::println(stderr, "Session: backend socket close error: {}", e.what());
+    m_backendSocket.shutdown(tcp::socket::shutdown_both, ec); // NOLINT(bugprone-unused-return-value)
+    if (ec) {
+        std::println(stderr, "Session: backend socket shutdown error: {}", ec.message());
+    }
+    m_backendSocket.close(ec); // NOLINT(bugprone-unused-return-value)
+    if (ec) {
+        std::println(stderr, "Session: backend socket close error: {}", ec.message());
     }
 }
