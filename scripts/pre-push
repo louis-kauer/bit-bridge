@@ -3,7 +3,21 @@
 
 echo "Running pre-push checks..."
 
-echo "[1/3] Building and running tests..."
+echo "[1/4] GCC cross-compile check (Docker)..."
+if command -v docker > /dev/null 2>&1; then
+    if ! docker run --rm --platform linux/amd64 \
+        -v "$(pwd)":/workspace \
+        -w /workspace \
+        ghcr.io/louis-kauer/bit-bridge/ci:latest \
+        sh -c "cmake -S . -B /tmp/cmake-build-gcc -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=g++-14 -DCMAKE_C_COMPILER=gcc-14 > /dev/null 2>&1 && cmake --build /tmp/cmake-build-gcc -j2 > /dev/null 2>&1"; then
+        echo "GCC cross-compile failed. Push aborted."
+        exit 1
+    fi
+else
+    echo "Docker not running — skipping GCC cross-compile check."
+fi
+
+echo "[2/4] Building and running tests..."
 if ! make build > /dev/null 2>&1; then
     echo "Build failed. Push aborted."
     exit 1
@@ -13,13 +27,13 @@ if ! make test > /dev/null 2>&1; then
     exit 1
 fi
 
-echo "[2/3] Running tests with AddressSanitizer..."
+echo "[3/4] Running tests with AddressSanitizer..."
 if ! make test-asan > /dev/null 2>&1; then
     echo "ASan tests failed (possible memory issue). Push aborted."
     exit 1
 fi
 
-echo "[3/3] Launching app with AddressSanitizer..."
+echo "[4/4] Launching app with AddressSanitizer..."
 echo "       Please use the app briefly, then quit to complete the check."
 if ! make run-asan 2>&1 | tee /tmp/bit_bridge_asan.log; then
     echo "ASan detected issues in the UI. Push aborted."

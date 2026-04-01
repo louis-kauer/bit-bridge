@@ -65,3 +65,34 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - run: make lint
+
+  bench:
+    needs: build-lb
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: read
+      pull-requests: read
+    container: ghcr.io/${{ github.repository }}/ci:latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            engine:
+              - 'core/**'
+              - 'bench/**'
+      - if: steps.filter.outputs.engine == 'true' && github.event_name == 'pull_request'
+        run: make bench-cpp-compare
+      - if: steps.filter.outputs.engine == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: make bench-cpp-update
+      - if: steps.filter.outputs.engine == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add benchmarks/baseline.json
+          git diff --cached --quiet || git commit -m "chore(bench): update baseline [skip ci]"
+          git push

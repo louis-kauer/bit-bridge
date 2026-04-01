@@ -186,9 +186,32 @@ build-ui: configure-debug ## Build UI binary only.
 build-lib: configure-debug ## Build shared library only.
 	$(CMAKE) --build $(BUILD_DIR_DEBUG) --target bitbridge_lib -j$(JOBS)
 
+.PHONY: build-bench
+build-bench: configure-release ## Build C++ benchmark binary only.
+	$(CMAKE) --build $(BUILD_DIR_RELEASE) --target bit_bridge_bench -j$(JOBS)
+
 .PHONY: run-lb
 run-lb: build-lb ## Run LB binary with default config.
 	./$(BUILD_DIR_DEBUG)/core/bit_bridge_lb $(if $(ARGS),$(ARGS),bitbridge-config.yaml)
+
+BENCH_CPP_BIN ?= ./$(BUILD_DIR_RELEASE)/bench/bit_bridge_bench
+BENCH_CPP_LB  ?= ./$(BUILD_DIR_RELEASE)/core/bit_bridge_lb
+CPP_REQUESTS  ?= 1000
+CPP_SERVICES  ?= 3
+CPP_CONCURRENCY ?= 50
+
+.PHONY: bench-cpp
+bench-cpp: release build-bench ## Run C++ benchmark (both algos).
+	@$(BENCH_CPP_BIN) $(BENCH_CPP_LB) --requests $(CPP_REQUESTS) --services $(CPP_SERVICES) --concurrency $(CPP_CONCURRENCY)
+
+.PHONY: bench-cpp-compare
+bench-cpp-compare: release build-bench ## Run C++ benchmark and fail on regression vs baseline.
+	@$(BENCH_CPP_BIN) $(BENCH_CPP_LB) --compare --requests $(CPP_REQUESTS) --services $(CPP_SERVICES) --concurrency $(CPP_CONCURRENCY)
+
+.PHONY: bench-cpp-update
+bench-cpp-update: release build-bench ## Compare vs baseline (fail on regression), then update baseline.
+	@$(BENCH_CPP_BIN) $(BENCH_CPP_LB) --compare --requests $(CPP_REQUESTS) --services $(CPP_SERVICES) --concurrency $(CPP_CONCURRENCY)
+	@$(BENCH_CPP_BIN) $(BENCH_CPP_LB) --baseline --requests $(CPP_REQUESTS) --services $(CPP_SERVICES) --concurrency $(CPP_CONCURRENCY)
 
 ##@ Analysis
 
@@ -264,7 +287,7 @@ run-asan: ## Run the app with AddressSanitizer (quit the app to see the report).
 		$(if $(CXX),-DCMAKE_CXX_COMPILER=$(CXX),) \
 		$(if $(CC),-DCMAKE_C_COMPILER=$(CC),)
 	@$(CMAKE) --build $(BUILD_DIR_ASAN) --target bit_bridge -j$(JOBS)
-	@$(BUILD_DIR_ASAN)/bit_bridge
+	@$(BUILD_DIR_ASAN)/ui/bit_bridge
 
 ##@ Setup
 

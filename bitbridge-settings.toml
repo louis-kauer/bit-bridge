@@ -1,4 +1,4 @@
-# Bit Bridge - User Interface Settings
+# Bit Bridge - UI Configuration Tool
 # These values configure the UI defaults, not the load balancer itself.
 
 # Path to the load balancer configuration file (YAML)
