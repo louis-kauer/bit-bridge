@@ -70,29 +70,43 @@ jobs:
     needs: build-lb
     runs-on: ubuntu-latest
     permissions:
-      contents: write
       packages: read
+      contents: read
     container: ghcr.io/${{ github.repository }}/ci:latest
+    outputs:
+      engine: ${{ steps.filter.outputs.engine }}
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - id: filter
         run: |
-          BASE=${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || 'HEAD~1' }}
-          if git diff --name-only "$BASE" HEAD | grep -qE '^(core|bench)/'; then
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+          else
+            BASE="${{ github.event.before }}"
+          fi
+          git fetch --depth=1 origin "$BASE" 2>/dev/null || true
+          if git cat-file -e "$BASE" 2>/dev/null && git diff --name-only "$BASE" HEAD | grep -qE '^(core|bench)/'; then
+            echo "engine=true" >> "$GITHUB_OUTPUT"
+          elif ! git cat-file -e "$BASE" 2>/dev/null; then
             echo "engine=true" >> "$GITHUB_OUTPUT"
           else
             echo "engine=false" >> "$GITHUB_OUTPUT"
           fi
+      - if: steps.filter.outputs.engine == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: bench-baseline
+          path: bench/baselines/
+        continue-on-error: true
       - if: steps.filter.outputs.engine == 'true' && github.event_name == 'pull_request'
         run: make bench-cpp-compare
       - if: steps.filter.outputs.engine == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: make bench-cpp-update
       - if: steps.filter.outputs.engine == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add bench/baselines/baseline.json
-          git diff --cached --quiet || git commit -m "chore(bench): update baseline [skip ci]"
-          git push
+        uses: actions/upload-artifact@v4
+        with:
+          name: bench-baseline
+          path: bench/baselines/baseline.json
+          overwrite: true
