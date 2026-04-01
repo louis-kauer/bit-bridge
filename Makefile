@@ -198,18 +198,19 @@ BENCH_CPP_BIN ?= ./$(BUILD_DIR_RELEASE)/bench/bit_bridge_bench
 BENCH_CPP_LB  ?= ./$(BUILD_DIR_RELEASE)/core/bit_bridge_lb
 CPP_REQUESTS  ?= 1000
 CPP_SERVICES  ?= 3
+CPP_CONCURRENCY ?= 50
 
 .PHONY: bench-cpp
 bench-cpp: release build-bench ## Run C++ benchmark (both algos).
-	@$(BENCH_CPP_BIN) $(BENCH_CPP_LB) --requests $(CPP_REQUESTS) --services $(CPP_SERVICES) --concurrency $(CONCURRENCY)
+	@$(BENCH_CPP_BIN) $(BENCH_CPP_LB) --requests $(CPP_REQUESTS) --services $(CPP_SERVICES) --concurrency $(CPP_CONCURRENCY)
 
 .PHONY: bench-cpp-baseline
 bench-cpp-baseline: release build-bench ## Run C++ benchmark and save as baseline.
-	@$(BENCH_CPP_BIN) $(BENCH_CPP_LB) --baseline --requests $(CPP_REQUESTS) --services $(CPP_SERVICES) --concurrency $(CONCURRENCY)
+	@$(BENCH_CPP_BIN) $(BENCH_CPP_LB) --baseline --requests $(CPP_REQUESTS) --services $(CPP_SERVICES) --concurrency $(CPP_CONCURRENCY)
 
 .PHONY: bench-cpp-compare
 bench-cpp-compare: release build-bench ## Run C++ benchmark and fail on regression vs baseline.
-	@$(BENCH_CPP_BIN) $(BENCH_CPP_LB) --compare --requests $(CPP_REQUESTS) --services $(CPP_SERVICES) --concurrency $(CONCURRENCY)
+	@$(BENCH_CPP_BIN) $(BENCH_CPP_LB) --compare --requests $(CPP_REQUESTS) --services $(CPP_SERVICES) --concurrency $(CPP_CONCURRENCY)
 
 ##@ Analysis
 
