@@ -3,6 +3,7 @@
 ### Additional Files
 notes.md
 bitbridge-config.yaml
+bench/baselines/baseline.json
 
 ### C++ template
 # Prerequisites
@@ -52,5 +53,3 @@ CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
 .cache/
-
-bench/baselines/baseline.json
