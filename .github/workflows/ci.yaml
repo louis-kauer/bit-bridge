@@ -97,6 +97,7 @@ jobs:
       - if: steps.filter.outputs.engine == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: make bench-cpp-update
       - if: steps.filter.outputs.engine == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        working-directory: ${{ github.workspace }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
