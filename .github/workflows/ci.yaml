@@ -65,3 +65,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - run: make lint
+
+  bench:
+    needs: build-lb
+    runs-on: ubuntu-latest
+    container: ghcr.io/${{ github.repository }}/ci:latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: make bench-cpp-compare

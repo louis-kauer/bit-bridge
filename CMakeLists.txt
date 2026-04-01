@@ -10,6 +10,7 @@ find_package(yaml-cpp REQUIRED)
 # --- Modules ---
 add_subdirectory(lib)
 add_subdirectory(core)
+add_subdirectory(bench)
 
 # UI and tests are optional — skip in CI if wxWidgets not available
 find_package(wxWidgets COMPONENTS net core base)
@@ -31,7 +32,7 @@ endif ()
 
 # --- ASan ---
 if (ENABLE_ASAN)
-    foreach (target bit_bridge bit_bridge_lb bit_bridge_tests)
+    foreach (target bit_bridge bit_bridge_lb bit_bridge_bench bit_bridge_tests)
         if (TARGET ${target})
             target_compile_options(${target} PRIVATE -fsanitize=address -fno-omit-frame-pointer)
             target_link_options(${target} PRIVATE -fsanitize=address)

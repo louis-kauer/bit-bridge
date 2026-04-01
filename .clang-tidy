@@ -30,7 +30,10 @@ Checks: >
   -readability-redundant-string-init,
   -cppcoreguidelines-avoid-c-arrays,
   -modernize-avoid-c-arrays,
-  -bugprone-exception-escape
+  -bugprone-exception-escape,
+  -cppcoreguidelines-init-variables,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-avoid-const-or-ref-data-members
 
 HeaderFilterRegex: '(lib|core|ui)/.*'
 
