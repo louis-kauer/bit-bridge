@@ -72,6 +72,7 @@ jobs:
     permissions:
       packages: read
       contents: read
+      actions: read
     container: ghcr.io/${{ github.repository }}/ci:latest
     outputs:
       engine: ${{ steps.filter.outputs.engine }}
@@ -95,17 +96,21 @@ jobs:
             echo "engine=false" >> "$GITHUB_OUTPUT"
           fi
       - if: steps.filter.outputs.engine == 'true'
-        uses: actions/download-artifact@v4
+        uses: dawidd6/action-download-artifact@v19
         with:
           name: bench-baseline
+          branch: main
+          workflow: ci.yaml
+          workflow_conclusion: success
           path: bench/baselines/
-        continue-on-error: true
+          if_no_artifact_found: ignore
+          github_token: ${{ secrets.GITHUB_TOKEN }}
       - if: steps.filter.outputs.engine == 'true' && github.event_name == 'pull_request'
         run: make bench-cpp-compare
       - if: steps.filter.outputs.engine == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: make bench-cpp-update
       - if: steps.filter.outputs.engine == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: bench-baseline
           path: bench/baselines/baseline.json
