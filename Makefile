@@ -204,13 +204,14 @@ CPP_CONCURRENCY ?= 50
 bench-cpp: release build-bench ## Run C++ benchmark (both algos).
 	@$(BENCH_CPP_BIN) $(BENCH_CPP_LB) --requests $(CPP_REQUESTS) --services $(CPP_SERVICES) --concurrency $(CPP_CONCURRENCY)
 
-.PHONY: bench-cpp-baseline
-bench-cpp-baseline: release build-bench ## Run C++ benchmark and save as baseline.
-	@$(BENCH_CPP_BIN) $(BENCH_CPP_LB) --baseline --requests $(CPP_REQUESTS) --services $(CPP_SERVICES) --concurrency $(CPP_CONCURRENCY)
-
 .PHONY: bench-cpp-compare
 bench-cpp-compare: release build-bench ## Run C++ benchmark and fail on regression vs baseline.
 	@$(BENCH_CPP_BIN) $(BENCH_CPP_LB) --compare --requests $(CPP_REQUESTS) --services $(CPP_SERVICES) --concurrency $(CPP_CONCURRENCY)
+
+.PHONY: bench-cpp-update
+bench-cpp-update: release build-bench ## Compare vs baseline (fail on regression), then update baseline.
+	@$(BENCH_CPP_BIN) $(BENCH_CPP_LB) --compare --requests $(CPP_REQUESTS) --services $(CPP_SERVICES) --concurrency $(CPP_CONCURRENCY)
+	@$(BENCH_CPP_BIN) $(BENCH_CPP_LB) --baseline --requests $(CPP_REQUESTS) --services $(CPP_SERVICES) --concurrency $(CPP_CONCURRENCY)
 
 ##@ Analysis
 
