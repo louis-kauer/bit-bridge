@@ -285,7 +285,7 @@ run-asan: ## Run the app with AddressSanitizer (quit the app to see the report).
 		$(if $(CXX),-DCMAKE_CXX_COMPILER=$(CXX),) \
 		$(if $(CC),-DCMAKE_C_COMPILER=$(CC),)
 	@$(CMAKE) --build $(BUILD_DIR_ASAN) --target bit_bridge -j$(JOBS)
-	@$(BUILD_DIR_ASAN)/bit_bridge
+	@$(BUILD_DIR_ASAN)/ui/bit_bridge
 
 ##@ Setup
 
