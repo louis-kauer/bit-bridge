@@ -71,6 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: read
+      contents: read
     container: ghcr.io/${{ github.repository }}/ci:latest
     outputs:
       engine: ${{ steps.filter.outputs.engine }}
