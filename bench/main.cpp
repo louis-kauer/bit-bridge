@@ -492,7 +492,7 @@ static void PrintResult(const AlgoResult &r) {
 
     std::println("\n  {}{}{}", k_ansiBold, r.m_algo, k_ansiReset);
     std::println("  ──────────────────────  ────────────");
-    std::println("  {:<22} {:>12}", "Backends", std::format("{} healthy", r.m_backendCount));
+    std::println("  {:<22} {:>12}", "Services", std::format("{} healthy", r.m_backendCount));
     std::println("  {:<22} {:>12}", "Completed", r.m_completed);
     std::println("  {:<22} {:>11}%", "Error rate", errPct);
     std::println("  {:<22} {:>12}", "Peak connections", r.m_peakConnections);
@@ -623,7 +623,7 @@ SpawnEchoServices(asio::io_context &ioc, int count, int delayMs) {
     const std::string cfgPath = WriteTempConfig(algo, k_lbPort, servicePorts);
     const pid_t lbPid = StartLb(cfg.m_lbBinary, cfgPath);
     WaitPort(k_lbPort);
-    Success("LB started (pid={})  backends={} healthy", lbPid, servicePorts.size());
+    Success("LB started (pid={})  services={} healthy", lbPid, servicePorts.size());
 
     const auto t0 = std::chrono::steady_clock::now();
     LoadResult load = RunLoad(k_lbPort, cfg.m_requests, cfg.m_concurrency);
