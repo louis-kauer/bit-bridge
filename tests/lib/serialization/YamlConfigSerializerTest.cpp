@@ -17,8 +17,17 @@ protected:
         std::filesystem::remove_all(m_testDir);
     }
 
+private:
     std::string m_testDir;
     std::string m_testFile;
+
+    friend class YamlConfigSerializerTest_SaveAndLoadRoundTrip_Test;
+    friend class YamlConfigSerializerTest_SaveEmptyServicesList_Test;
+    friend class YamlConfigSerializerTest_LoadFromNonexistentFileReturnsFalse_Test;
+    friend class YamlConfigSerializerTest_LoadFromMalformedYamlReturnsFalse_Test;
+    friend class YamlConfigSerializerTest_LoadFromEmptyFileUsesDefaults_Test;
+    friend class YamlConfigSerializerTest_SaveCreatesParentDirectories_Test;
+    friend class YamlConfigSerializerTest_LoadPartialYamlUsesDefaults_Test;
 };
 
 TEST_F(YamlConfigSerializerTest, SaveAndLoadRoundTrip) {

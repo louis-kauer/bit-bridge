@@ -1,8 +1,8 @@
 #ifndef BIT_BRIDGE_SERVICE_NODE_HPP
 #define BIT_BRIDGE_SERVICE_NODE_HPP
 
-#include <string>
 #include <cstdint>
+#include <string>
 
 class ServiceNode {
 public:
