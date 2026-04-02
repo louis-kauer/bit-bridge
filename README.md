@@ -1,7 +1,8 @@
 # Bit Bridge
 
 Simple Layer 4 TCP Load Balancer + Configuration Tool
-![Screenshot](docs/screenshot.png)
+
+<img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/156e575a-e6f9-4e0d-9bcf-725c42c218ed" />
 
 ## Architecture
 
