@@ -5,6 +5,18 @@
 
 class BitBridgeApp : public wxApp {
 public:
+    BitBridgeApp() = default;
+
+    BitBridgeApp(const BitBridgeApp &) = delete;
+
+    BitBridgeApp(BitBridgeApp &&) = delete;
+
+    BitBridgeApp &operator=(const BitBridgeApp &) = delete;
+
+    BitBridgeApp &operator=(BitBridgeApp &&) = delete;
+
+    ~BitBridgeApp() override = default;
+
     bool OnInit() override;
 };
 
