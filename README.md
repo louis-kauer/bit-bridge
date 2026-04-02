@@ -1,8 +1,12 @@
 # Bit Bridge
 
-A simple Layer 4 TCP load balancer written in C++23, designed to distribute incoming TCP connections across multiple backend services using configurable routing algorithms. Includes a wxWidgets desktop application for visually creating and editing load balancer configurations, and an async networking engine built on Boost.Asio with active health checking and graceful shutdown.
+# Bit Bridge
 
-<img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/156e575a-e6f9-4e0d-9bcf-725c42c218ed" />
+A Layer 4 TCP load balancer written in C++23, designed to distribute incoming TCP connections across multiple services using configurable routing algorithms. Includes a wxWidgets desktop application for visually creating and editing load balancer configurations, and an async networking engine built on Boost.Asio with active health checking and graceful shutdown.
+
+<p align="center">
+  <img width="600" alt="Bit Bridge Configuration UI" src="https://github.com/user-attachments/assets/156e575a-e6f9-4e0d-9bcf-725c42c218ed" />
+</p>
 
 ## Architecture
 
