@@ -28,7 +28,7 @@ TEST(ServicePoolTest, GetServiceReturnsCorrectNode) {
 
 TEST(ServicePoolTest, GetServiceOutOfBoundsThrows) {
     ServicePool pool;
-    EXPECT_THROW([[maybe_unused]] auto &svc = pool.GetService(0), std::out_of_range);
+    EXPECT_THROW([[maybe_unused]]auto &svc = pool.GetService(0), std::out_of_range);
 }
 
 TEST(ServicePoolTest, GetHealthyCountReflectsState) {

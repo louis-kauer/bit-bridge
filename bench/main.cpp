@@ -1,4 +1,8 @@
 // C++ benchmark driver for bit_bridge_lb.
+// This benchmark is not designed to align with the code style practices of the rest of the project.
+// It is a CI helper script used for manual testing and benchmarking purposes,
+// therefore a procedural structure is used.
+//
 // Spins up in-process mock TCP services, starts the LB binary as a subprocess,
 // then hammers it with concurrent connections and reports latency/throughput stats.
 //

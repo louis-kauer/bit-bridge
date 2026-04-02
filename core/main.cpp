@@ -38,7 +38,9 @@ int main(int argc, char *argv[]) {
 
         ServicePool pool(config.GetServices());
 
-        const std::unordered_map<std::string, std::function<std::unique_ptr<IRoutingStrategy>()> > strategyFactory{
+        const std::unordered_map<std::string, std::function < std::unique_ptr<IRoutingStrategy>()>
+        >
+        strategyFactory{
             // NOSONAR cpp:S6045
             {"p2c", []() -> std::unique_ptr<IRoutingStrategy> { return std::make_unique<P2CStrategy>(); }},
             {
@@ -97,7 +99,7 @@ int main(int argc, char *argv[]) {
         std::println("  Listen:    {}:{}", config.GetListenAddress(), config.GetListenPort());
         std::println("  Algorithm: {}", config.GetRoutingAlgorithm());
         std::println("  Services:  {}", config.GetServiceCount());
-        for (const auto &svc : config.GetServices()) {
+        for (const auto &svc: config.GetServices()) {
             std::println("    - {} ({}:{})", svc.GetName(), svc.GetIp(), svc.GetPort());
         }
 

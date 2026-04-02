@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 env:
   CXX: g++-14
@@ -51,7 +51,7 @@ jobs:
       - run: make test-core
 
   asan:
-    needs: [build-lib, build-lb]
+    needs: [ build-lib, build-lb ]
     runs-on: ubuntu-latest
     container: ghcr.io/${{ github.repository }}/ci:latest
     steps:
@@ -59,7 +59,7 @@ jobs:
       - run: make test-asan
 
   lint:
-    needs: [build-lib, build-ui, build-lb]
+    needs: [ build-lib, build-ui, build-lb ]
     runs-on: ubuntu-latest
     container: ghcr.io/${{ github.repository }}/ci:latest
     steps:

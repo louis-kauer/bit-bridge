@@ -20,6 +20,16 @@ public:
     MainFrame(const wxString &title, const wxPoint &pos, const wxSize &size,
               std::unique_ptr<AppSettings> settings);
 
+    MainFrame(const MainFrame &) = delete;
+
+    MainFrame(MainFrame &&) = delete;
+
+    MainFrame &operator=(const MainFrame &) = delete;
+
+    MainFrame &operator=(MainFrame &&) = delete;
+
+    ~MainFrame() override = default;
+
 private:
     void OnAddService(wxCommandEvent &event);
 
@@ -43,7 +53,8 @@ private:
 
     void MarkSaved();
 
-    [[nodiscard]] static bool ValidateInput(const wxString &name, const wxString &ip, const wxString &port, const wxString &weight);
+    [[nodiscard]] static bool ValidateInput(const wxString &name, const wxString &ip, const wxString &port,
+                                            const wxString &weight);
 
     std::unique_ptr<AppSettings> m_settings;
     std::unique_ptr<LoadBalancerConfig> m_config;

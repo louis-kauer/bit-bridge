@@ -159,8 +159,8 @@ void MainFrame::HandleTabNavigation(wxKeyEvent &event) {
     for (size_t i = 0; i < tabOrder.size(); ++i) {
         if (focused == tabOrder.at(i)) {
             const size_t next = event.ShiftDown()
-                              ? (i + tabOrder.size() - 1) % tabOrder.size()
-                              : (i + 1) % tabOrder.size();
+                                    ? (i + tabOrder.size() - 1) % tabOrder.size()
+                                    : (i + 1) % tabOrder.size();
             tabOrder.at(next)->SetFocus();
             return;
         }
@@ -289,7 +289,7 @@ void MainFrame::OnRemoveService([[maybe_unused]] wxCommandEvent &event) {
     }
 
     // Remove in reverse order so indices stay valid
-    for (const auto &idx : std::ranges::reverse_view(selected)) {
+    for (const auto &idx: std::ranges::reverse_view(selected)) {
         m_config->RemoveService(static_cast<size_t>(idx));
     }
 
@@ -310,7 +310,8 @@ void MainFrame::OnLoadConfig([[maybe_unused]] wxCommandEvent &event) {
         return;
     }
 
-    if (auto newConfig = std::make_unique<LoadBalancerConfig>(); m_serializer->Load(*newConfig, configPath).has_value()) {
+    if (auto newConfig = std::make_unique<LoadBalancerConfig>(); m_serializer->Load(*newConfig, configPath).
+        has_value()) {
         m_config = std::move(newConfig);
         RefreshServiceList();
         MarkSaved();
@@ -322,7 +323,8 @@ void MainFrame::OnLoadConfig([[maybe_unused]] wxCommandEvent &event) {
 }
 
 void MainFrame::OnSaveConfig([[maybe_unused]] wxCommandEvent &event) {
-    if (const std::string configPath = m_settings->GetConfigFilePath(); m_serializer->Save(*m_config, configPath).has_value()) {
+    if (const std::string configPath = m_settings->GetConfigFilePath(); m_serializer->Save(*m_config, configPath).
+        has_value()) {
         MarkSaved();
         SetStatusText(wxString::Format("Configuration saved to %s", configPath.c_str()));
     } else {
