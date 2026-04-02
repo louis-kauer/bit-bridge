@@ -78,16 +78,23 @@ graph TD
 ### macOS
 
 ```bash
-brew install wxwidgets yaml-cpp boost cmake
-# tomlplusplus and googletest are built from source via CMake
+brew install wxwidgets yaml-cpp boost cmake tomlplusplus googletest
 make build
 ```
 
 ### Linux (Ubuntu 24.04)
 
 ```bash
-sudo apt install g++-14 cmake make libwxgtk3.2-dev libyaml-cpp-dev libboost-dev
-# tomlplusplus and googletest are built from source via CMake
+sudo apt install g++-14 cmake make libwxgtk3.2-dev libyaml-cpp-dev libboost-dev git
+
+# tomlplusplus
+git clone --depth 1 --branch v3.4.0 https://github.com/marzer/tomlplusplus.git /tmp/tomlplusplus \
+  && cd /tmp/tomlplusplus && cmake -S . -B build && sudo cmake --install build
+
+# googletest
+git clone --depth 1 --branch v1.17.0 https://github.com/google/googletest.git /tmp/googletest \
+  && cd /tmp/googletest && cmake -S . -B build && sudo cmake --install build
+
 make build
 ```
 
