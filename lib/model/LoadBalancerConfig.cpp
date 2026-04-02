@@ -1,7 +1,7 @@
 #include "LoadBalancerConfig.hpp"
 
 LoadBalancerConfig::LoadBalancerConfig()
-    : m_name("bit-bridge-cluster")
+    : m_name("my-bit-bridge-lb")
       , m_listenAddress("0.0.0.0")
       , m_listenPort(8080)
       , m_routingAlgorithm("p2c")

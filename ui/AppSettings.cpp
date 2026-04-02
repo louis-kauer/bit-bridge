@@ -6,7 +6,7 @@
 
 AppSettings::AppSettings()
     : m_configFilePath("bitbridge-config.yaml")
-      , m_defaultName("bit-bridge-cluster")
+      , m_defaultName("my-bit-bridge-lb")
       , m_defaultListenAddress("0.0.0.0")
       , m_defaultListenPort(8080)
       , m_defaultRoutingAlgorithm("p2c")

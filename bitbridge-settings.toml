@@ -6,7 +6,7 @@ config_file_path = "bitbridge-config.yaml"
 
 # Default values pre-filled when creating a new configuration
 [defaults]
-name = "bit-bridge-cluster"
+name = "my-bit-bridge-lb"
 listen_address = "0.0.0.0"
 listen_port = 8080
 routing_algorithm = "p2c"
