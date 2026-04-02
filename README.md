@@ -1,14 +1,12 @@
 # Bit Bridge
 
-# Bit Bridge
-
-Layer 4 TCP load balancer in C++23 with a wxWidgets configuration UI.
+A simple Layer 4 TCP load balancer in C++23 with a configuration tool.
 Routes connections across services via **Power of Two Choices** or **Consistent Hash Ring**, with active health checking and graceful shutdown — powered by Boost.Asio.
 
 <table>
   <tr>
-    <td><img src="https://github.com/user-attachments/assets/156e575a-e6f9-4e0d-9bcf-725c42c218ed" width="800"></td>
-    <td><img src="https://github.com/user-attachments/assets/156e575a-e6f9-4e0d-9bcf-725c42c218ed" width="800"></td>
+    <td><img src="https://github.com/user-attachments/assets/156e575a-e6f9-4e0d-9bcf-725c42c218ed" width="300"></td>
+    <td><img src="https://github.com/user-attachments/assets/e7ce5f93-8b35-4580-bf26-8eeb81f7f1bb" width="300"></td>
   </tr>
 </table>
 
@@ -62,8 +60,8 @@ graph TD
 - **Active Health Checks** — timer-based TCP connect probes with configurable interval, timeout, and unhealthy threshold
 - **Full-Duplex TCP Proxy** — async bidirectional data relay via Boost.Asio with connect and idle timeouts
 - **Graceful Shutdown** — SIGINT/SIGTERM handling, drains existing connections before exit
-- **wxWidgets Config UI** — desktop tool for creating and editing YAML load balancer configurations
 - **CI Benchmarks** — automated performance regression detection on every pull request
+- **wxWidgets Config UI** — desktop tool for creating and editing YAML load balancer configurations
 
 ## Build
 
