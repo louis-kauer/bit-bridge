@@ -222,6 +222,12 @@ Options can be customized via environment variables:
 CPP_REQUESTS=5000 CPP_CONCURRENCY=100 CPP_SERVICES=5 make bench-cpp
 ```
 
+With pre-built binaries (no build system needed):
+
+```bash
+./bit_bridge_bench ./bit_bridge_lb
+```
+
 ### Testing
 
 ```bash
