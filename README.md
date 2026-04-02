@@ -1,6 +1,6 @@
 # Bit Bridge
 
-Simple Layer 4 TCP Load Balancer + Configuration Tool
+A simple Layer 4 TCP load balancer written in C++23, designed to distribute incoming TCP connections across multiple backend services using configurable routing algorithms. Includes a wxWidgets desktop application for visually creating and editing load balancer configurations, and an async networking engine built on Boost.Asio with active health checking and graceful shutdown.
 
 <img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/156e575a-e6f9-4e0d-9bcf-725c42c218ed" />
 
@@ -49,13 +49,13 @@ graph TD
 
 ## Features
 
-- **Power of Two Choices (P2C)** — O(1) load-aware routing, picks the lighter of two random healthy backends
-- **Consistent Hash Ring** — O(log n) affinity-based routing with 150 virtual nodes per backend and FNV-1a hashing
-- **Active Health Checks** — timer-based TCP connect probes with configurable thresholds
-- **Full-Duplex TCP Proxy** — async bidirectional data relay via Boost.Asio
-- **Graceful Shutdown** — SIGINT/SIGTERM handling, drains existing connections
+- **Power of Two Choices (P2C)** — O(1) load-aware routing, picks the lighter of two random healthy services
+- **Consistent Hash Ring** — O(log n) affinity-based routing with 150 virtual nodes per service and FNV-1a hashing
+- **Active Health Checks** — timer-based TCP connect probes with configurable interval, timeout, and unhealthy threshold
+- **Full-Duplex TCP Proxy** — async bidirectional data relay via Boost.Asio with connect and idle timeouts
+- **Graceful Shutdown** — SIGINT/SIGTERM handling, drains existing connections before exit
 - **wxWidgets Config UI** — desktop tool for creating and editing YAML load balancer configurations
-- **CI Benchmarks** — automated performance regression detection on every PR
+- **CI Benchmarks** — automated performance regression detection on every pull request
 
 ## Build
 
@@ -93,7 +93,7 @@ make build
 make run
 ```
 
-Opens the desktop configuration tool for creating and editing load balancer YAML configs.
+Opens the desktop configuration tool for creating and editing load balancer YAML configs. The UI reads default values from `bitbridge-settings.toml` and saves configurations as YAML files that the load balancer binary can consume.
 
 ### Load Balancer
 
@@ -103,7 +103,7 @@ make run-lb
 make run-lb ARGS="path/to/config.yaml"
 ```
 
-Starts the TCP load balancer reading from the specified YAML configuration.
+Starts the TCP load balancer reading from the specified YAML configuration. By default it reads `bitbridge-config.yaml` in the project root.
 
 ### Example Config
 
@@ -113,11 +113,11 @@ listenAddress: "0.0.0.0"
 listenPort: 8080
 routingAlgorithm: "p2c"
 services:
-  - name: backend-1
+  - name: service-1
     ip: "127.0.0.1"
     port: 9001
     weight: 1
-  - name: backend-2
+  - name: service-2
     ip: "127.0.0.1"
     port: 9002
     weight: 1
@@ -130,6 +130,56 @@ connection:
   maxPerService: 1024
   idleTimeoutMs: 30000
   connectTimeoutMs: 5000
+```
+
+### Running Locally with Custom Services
+
+To test the load balancer end-to-end on your machine, start a few simple TCP services (e.g. using `nc` or any HTTP server), then point the LB at them:
+
+1. Start two echo services in separate terminals:
+   ```bash
+   # Terminal 1
+   while true; do echo -e "HTTP/1.1 200 OK\r\n\r\nHello from 9001" | nc -l 9001; done
+
+   # Terminal 2
+   while true; do echo -e "HTTP/1.1 200 OK\r\n\r\nHello from 9002" | nc -l 9002; done
+   ```
+
+2. Create a config file (or use the UI to generate one) with `listenPort: 8080` and the two services on ports 9001 and 9002.
+
+3. Start the load balancer:
+   ```bash
+   make run-lb
+   ```
+
+4. Send requests through the LB:
+   ```bash
+   curl http://127.0.0.1:8080
+   ```
+
+   Each request is routed to one of the services based on the configured algorithm. With P2C, the LB picks the service with fewer active connections. With consistent-hash, the same client IP always maps to the same service.
+
+5. Kill one of the `nc` processes — the health checker (if enabled) will mark it unhealthy after the configured threshold, and new connections will route to the remaining healthy service.
+
+### Benchmarks
+
+The project includes a C++ benchmark tool that spins up mock TCP services, starts the LB as a subprocess, and measures throughput and latency under concurrent load.
+
+```bash
+# Run benchmarks for both algorithms
+make bench-cpp
+
+# Compare against the stored baseline (fails on >15% regression)
+make bench-cpp-compare
+
+# Save a new baseline after comparison
+make bench-cpp-update
+```
+
+Options can be customized via environment variables:
+
+```bash
+CPP_REQUESTS=5000 CPP_CONCURRENCY=100 CPP_SERVICES=5 make bench-cpp
 ```
 
 ### Testing
