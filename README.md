@@ -111,6 +111,26 @@ make run-lb ARGS="path/to/config.yaml"
 
 Starts the TCP load balancer reading from the specified YAML configuration. By default it reads `bitbridge-config.yaml` in the project root.
 
+### Load Balancer (Docker)
+
+The LB is also available as a minimal container image based on [distroless](https://github.com/GoogleContainerTools/distroless):
+
+```bash
+docker run -v ./config.yaml:/etc/bit-bridge/config.yaml \
+  -p 8080:8080 \
+  ghcr.io/louis-kauer/bit-bridge:latest
+```
+
+Or with a specific version:
+
+```bash
+docker run -v ./config.yaml:/etc/bit-bridge/config.yaml \
+  -p 8080:8080 \
+  ghcr.io/louis-kauer/bit-bridge:v1.0.0
+```
+
+Multi-arch images are published for `linux/amd64` and `linux/arm64`.
+
 ### Example Config
 
 ```yaml
