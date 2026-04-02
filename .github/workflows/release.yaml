@@ -154,3 +154,4 @@ jobs:
             bit-bridge-${{ github.ref_name }}-source.tar.gz
             bit-bridge-${{ github.ref_name }}-source.zip
           generate_release_notes: true
+          prerelease: ${{ contains(github.ref_name, '-') }}
