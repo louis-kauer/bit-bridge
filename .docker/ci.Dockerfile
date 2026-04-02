@@ -18,13 +18,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# clang-tidy 19 from LLVM repo
-RUN mkdir -p /etc/apt/keyrings \
-    && wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | tee /etc/apt/keyrings/llvm.asc > /dev/null \
-    && echo "deb [signed-by=/etc/apt/keyrings/llvm.asc] https://apt.llvm.org/noble/ llvm-toolchain-noble-19 main" | tee /etc/apt/sources.list.d/llvm-19.list \
-    && apt-get update && apt-get install -y --no-install-recommends clang-tidy-19 \
-    && ln -sf /usr/bin/clang-tidy-19 /usr/bin/clang-tidy \
-    && rm -rf /var/lib/apt/lists/*
+# clang-tidy 19 from LLVM repo (amd64 only — LLVM does not publish arm64 packages)
+RUN if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
+        mkdir -p /etc/apt/keyrings \
+        && wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | tee /etc/apt/keyrings/llvm.asc > /dev/null \
+        && echo "deb [signed-by=/etc/apt/keyrings/llvm.asc] https://apt.llvm.org/noble/ llvm-toolchain-noble-19 main" | tee /etc/apt/sources.list.d/llvm-19.list \
+        && apt-get update && apt-get install -y --no-install-recommends clang-tidy-19 \
+        && ln -sf /usr/bin/clang-tidy-19 /usr/bin/clang-tidy \
+        && rm -rf /var/lib/apt/lists/*; \
+    fi
 
 # tomlplusplus v3.4.0
 RUN git clone --depth 1 --branch v3.4.0 https://github.com/marzer/tomlplusplus.git /tmp/tomlplusplus \
