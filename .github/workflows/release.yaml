@@ -38,7 +38,7 @@ jobs:
 
       - name: Build binaries in container
         run: |
-          docker run --rm \
+          docker run --rm --platform ${{ matrix.platform }} \
             -v "${{ github.workspace }}:/workspace" \
             -w /workspace \
             ${{ env.CI_IMAGE }} \
