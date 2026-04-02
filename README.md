@@ -126,7 +126,7 @@ Or with a specific version:
 ```bash
 docker run -v ./config.yaml:/etc/bit-bridge/config.yaml \
   -p 8080:8080 \
-  ghcr.io/louis-kauer/bit-bridge:v1.0.0
+  ghcr.io/louis-kauer/bit-bridge:v0.1.0-alpha
 ```
 
 Multi-arch images are published for `linux/amd64` and `linux/arm64`.
