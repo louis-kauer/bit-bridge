@@ -1,4 +1,4 @@
 #include <wx/wx.h>
 #include "BitBridgeApp.hpp"
 
-wxIMPLEMENT_APP (BitBridgeApp);
+wxIMPLEMENT_APP(BitBridgeApp);

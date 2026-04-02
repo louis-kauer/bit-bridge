@@ -6,8 +6,7 @@
 #include <filesystem>
 
 std::expected<void, std::string> YamlConfigSerializer::Save(
-    const LoadBalancerConfig& config, const std::string& filePath)
-{
+    const LoadBalancerConfig &config, const std::string &filePath) {
     try {
         YAML::Emitter out;
         out << YAML::BeginMap;
@@ -19,7 +18,7 @@ std::expected<void, std::string> YamlConfigSerializer::Save(
 
         // Health check section
         out << YAML::Key << "healthCheck" << YAML::Value << YAML::BeginMap;
-        const HealthCheckConfig& hc = config.GetHealthCheck();
+        const HealthCheckConfig &hc = config.GetHealthCheck();
         out << YAML::Key << "enabled" << YAML::Value << hc.GetEnabled();
         out << YAML::Key << "intervalMs" << YAML::Value << hc.GetIntervalMs();
         out << YAML::Key << "timeoutMs" << YAML::Value << hc.GetTimeoutMs();
@@ -28,7 +27,7 @@ std::expected<void, std::string> YamlConfigSerializer::Save(
 
         // Connection section
         out << YAML::Key << "connection" << YAML::Value << YAML::BeginMap;
-        const ConnectionConfig& conn = config.GetConnection();
+        const ConnectionConfig &conn = config.GetConnection();
         out << YAML::Key << "maxPerService" << YAML::Value << conn.GetMaxPerService();
         out << YAML::Key << "idleTimeoutMs" << YAML::Value << conn.GetIdleTimeoutMs();
         out << YAML::Key << "connectTimeoutMs" << YAML::Value << conn.GetConnectTimeoutMs();
@@ -36,7 +35,7 @@ std::expected<void, std::string> YamlConfigSerializer::Save(
 
         // Services section
         out << YAML::Key << "services" << YAML::Value << YAML::BeginSeq;
-        for (const auto& service : config.GetServices()) {
+        for (const auto &service: config.GetServices()) {
             out << YAML::BeginMap;
             out << YAML::Key << "name" << YAML::Value << service.GetName();
             out << YAML::Key << "ip" << YAML::Value << service.GetIp();
@@ -58,14 +57,13 @@ std::expected<void, std::string> YamlConfigSerializer::Save(
         }
         fout << out.c_str();
         return {};
-    } catch (const YAML::Exception& e) {
+    } catch (const YAML::Exception &e) {
         return std::unexpected(std::string("YAML error: ") + e.what());
     }
 }
 
 std::expected<void, std::string> YamlConfigSerializer::Load(
-    LoadBalancerConfig& config, const std::string& filePath)
-{
+    LoadBalancerConfig &config, const std::string &filePath) {
     try {
         YAML::Node root = YAML::LoadFile(filePath);
         config.ClearServices();
@@ -106,7 +104,7 @@ std::expected<void, std::string> YamlConfigSerializer::Load(
 
         // Services section
         if (root["services"]) {
-            for (const auto& serviceNode : root["services"]) {
+            for (const auto &serviceNode: root["services"]) {
                 std::string name = serviceNode["name"] ? serviceNode["name"].as<std::string>() : "";
                 std::string ip = serviceNode["ip"] ? serviceNode["ip"].as<std::string>() : "";
                 uint16_t port = serviceNode["port"] ? serviceNode["port"].as<uint16_t>() : 0;
@@ -116,7 +114,7 @@ std::expected<void, std::string> YamlConfigSerializer::Load(
         }
 
         return {};
-    } catch (const YAML::Exception& e) {
+    } catch (const YAML::Exception &e) {
         return std::unexpected(std::string("YAML error: ") + e.what());
     }
 }
