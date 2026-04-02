@@ -111,9 +111,23 @@ make run-lb ARGS="path/to/config.yaml"
 
 Starts the TCP load balancer reading from the specified YAML configuration. By default it reads `bitbridge-config.yaml` in the project root.
 
+### Pre-Built Binaries
+
+Pre-built binaries for Linux (amd64/arm64) are available from the [GitHub Releases](https://github.com/louis-kauer/bit-bridge/releases) page.
+
+```bash
+# Configuration UI (requires wxWidgets installed)
+./bit_bridge-linux-amd64
+
+# Load Balancer
+./bit_bridge_lb-linux-amd64 bitbridge-config.yaml
+```
+
+A sample `bitbridge-config.yaml` is provided in the Example Config section below.
+
 ### Load Balancer (Docker)
 
-The LB is also available as a minimal container image based on [distroless](https://github.com/GoogleContainerTools/distroless):
+The LB is also available as a container image:
 
 ```bash
 docker run -v ./config.yaml:/etc/bit-bridge/config.yaml \
@@ -134,28 +148,28 @@ Multi-arch images are published for `linux/amd64` and `linux/arm64`.
 ### Example Config
 
 ```yaml
-name: my-cluster
-listenAddress: "0.0.0.0"
+name: my-bit-bridge-lb
+listenAddress: 127.0.0.1
 listenPort: 8080
-routingAlgorithm: "p2c"
-services:
-  - name: service-1
-    ip: "127.0.0.1"
-    port: 9001
-    weight: 1
-  - name: service-2
-    ip: "127.0.0.1"
-    port: 9002
-    weight: 1
+routingAlgorithm: p2c
 healthCheck:
-  enabled: true
+  enabled: false
   intervalMs: 5000
   timeoutMs: 2000
   unhealthyThreshold: 3
 connection:
-  maxPerService: 1024
-  idleTimeoutMs: 30000
-  connectTimeoutMs: 5000
+  maxPerService: 10
+  idleTimeoutMs: 5000
+  connectTimeoutMs: 1000
+services:
+  - name: service-1
+    ip: 127.0.0.1
+    port: 9001
+    weight: 1
+  - name: service-2
+    ip: 127.0.0.1
+    port: 9002
+    weight: 1
 ```
 
 ### Running Locally with Custom Services

@@ -1,0 +1,22 @@
+name: my-bit-bridge-lb
+listenAddress: 127.0.0.1
+listenPort: 8080
+routingAlgorithm: p2c
+healthCheck:
+  enabled: false
+  intervalMs: 5000
+  timeoutMs: 2000
+  unhealthyThreshold: 3
+connection:
+  maxPerService: 10
+  idleTimeoutMs: 5000
+  connectTimeoutMs: 1000
+services:
+  - name: service-1
+    ip: 127.0.0.1
+    port: 9001
+    weight: 1
+  - name: service-2
+    ip: 127.0.0.1
+    port: 9002
+    weight: 1
